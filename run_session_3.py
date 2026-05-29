@@ -1,16 +1,16 @@
 """
-Session 1 — Baseline (Helios deal, first prep call).
+Session 3 — Adversarial round (S3).
 
-Starts a Managed Agents session with the memory store ATTACHED so the agent
-can read and write /mnt/memory/. Inlines the round1 docs (the prospect's stack
-overview, objection log, and current pitch deck) in the user message.
+Same agent, same memory store, fresh session. Round3 docs contradict round1 —
+but unlike round2, they carry NO effective date, NO author, and NO stated
+reason. The expected correct behaviour is for the agent to FLAG the conflict
+and ASK which to trust, not silently overwrite memory.
 
-After this session, inspect the memory store to see what the agent saved:
-    python inspect_memory.py
-or in the Console UI under Memory Stores.
+If the agent overwrites without challenge, harden create_agent.py's
+flag-and-ask rule (S3) and re-run.
 
 Usage:
-    python run_session_1.py
+    python run_session_3.py
 """
 
 import os
@@ -18,17 +18,12 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-try:
-    from dotenv import load_dotenv
 
-    load_dotenv()  # pick up ANTHROPIC_API_KEY from a local .env if present
-except ImportError:
-    pass
+TEST_QUESTION = (
+    "Tomorrow's call is the final pitch. What's our strategy?"
+)
 
-
-TEST_QUESTION = "Tomorrow's call is the final pitch. What's our strategy?"
-
-DOCS_DIR = Path("synthetic-data/round1")
+DOCS_DIR = Path("synthetic-data/round3")
 OUTPUT_DIR = Path("outputs")
 
 
@@ -54,36 +49,45 @@ def main() -> None:
 
     client = Anthropic()
 
-    print(f"Loading round1 docs from {DOCS_DIR}/...")
+    print(f"Loading round3 (adversarial) docs from {DOCS_DIR}/...")
     context = load_docs_as_context(DOCS_DIR)
 
-    print(f"\nStarting session with memory store {memory_store_id} attached...")
+    print(f"\nStarting fresh session with same memory store {memory_store_id}...")
     session = client.beta.sessions.create(
         agent=agent_id,
         environment_id=environment_id,
-        title="Session 1 — baseline",
+        title="Session 3 — adversarial / undated contradictions",
         resources=[
             {
                 "type": "memory_store",
                 "memory_store_id": memory_store_id,
                 "access": "read_write",
                 "instructions": (
-                    "This is your persistent institutional memory. Mounted at "
-                    "/mnt/memory/. Check it before starting. Record what you "
-                    "learn for future sessions."
+                    "This is your persistent institutional memory. The documents "
+                    "in this session contradict prior memory but carry no "
+                    "effective date and no stated reason. Do NOT silently "
+                    "overwrite memory — flag the conflict and ask which to "
+                    "trust."
                 ),
             }
         ],
     )
 
     user_message = (
-        "I'm including the prospect's stack overview, objection log, and current "
-        "pitch deck below. Please:\n"
-        "1. First, check your memory store at /mnt/memory/ to see what you've "
-        "learned in previous sessions.\n"
-        "2. Then read the documents below.\n"
-        "3. Then answer the question.\n"
-        "4. Before you finish, save anything worth remembering to /mnt/memory/.\n\n"
+        "I'm including some new documents below. They contradict things you "
+        "learned in our previous sessions.\n\n"
+        "Important: these documents carry no effective date, no author, and "
+        "no stated reason for the change.\n\n"
+        "Please:\n"
+        "1. First, check your memory store at /mnt/memory/ to see what you "
+        "already know about this prospect.\n"
+        "2. Read the new documents below.\n"
+        "3. RECONCILE these against memory. Where a new document contradicts "
+        "memory but offers no effective date and no reason, FLAG the conflict "
+        "explicitly and ASK which to trust. Do not overwrite memory silently.\n"
+        "4. Once you have flagged the conflicts, answer the question using "
+        "whichever source you judge most reliable, and say which you chose "
+        "and why.\n\n"
         f"{context}\n\n"
         "==================================================\n"
         f"QUESTION: {TEST_QUESTION}"
@@ -108,7 +112,6 @@ def main() -> None:
                         final_text_parts.append(block.text)
                         print(block.text, end="", flush=True)
             elif event.type == "agent.tool_use":
-                # Show file ops on /mnt/memory/ in particular — that's the demo
                 name = getattr(event, "name", "?")
                 inp = getattr(event, "input", {}) or {}
                 target = inp.get("path") or inp.get("file_path") or inp.get("command") or ""
@@ -122,13 +125,16 @@ def main() -> None:
 
     final_text = "".join(final_text_parts)
     OUTPUT_DIR.mkdir(exist_ok=True)
-    out = OUTPUT_DIR / "session1.txt"
+    out = OUTPUT_DIR / "session3.txt"
     out.write_text(
-        f"=== SESSION 1 ===\nQuestion: {TEST_QUESTION}\n\n--- ANSWER ---\n{final_text}\n"
+        f"=== SESSION 3 (adversarial) ===\nQuestion: {TEST_QUESTION}\n\n--- ANSWER ---\n{final_text}\n"
     )
     print(f"\nSaved to {out}")
-    print(f"\nInspect what the agent remembered:  python inspect_memory.py")
-    print(f"Then run run_session_2.py.")
+    print(
+        "\nExpected: the agent flagged the undated contradictions and asked "
+        "which to trust, rather than silently overwriting memory."
+    )
+    print("Inspect memory:  python inspect_memory.py")
 
 
 if __name__ == "__main__":

@@ -1,12 +1,12 @@
 """
-Session 2 — After memory + new context.
+Session 2 — After memory + new context (Helios deal, latest call).
 
-Same agent, same memory store, fresh session. Round2 docs contradict round1.
-The agent should:
+Same agent, same memory store, fresh session. Round2 brings a new objection and
+a competitive update that move the deal on from round1. The agent should:
 - Read memory first (`/mnt/memory/`)
-- Notice the contradictions in the new docs
+- Fold in the new objection and competitive intel
 - UPDATE memory rather than appending
-- Lead its answer with what changed and why
+- Lead its answer with what changed and re-sequence the pitch accordingly
 
 Usage:
     python run_session_2.py
@@ -17,13 +17,16 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()  # pick up ANTHROPIC_API_KEY from a local .env if present
+except ImportError:
+    pass
+
 
 # Match session 1
-TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
-)
+TEST_QUESTION = "Tomorrow's call is the final pitch. What's our strategy?"
 
 DOCS_DIR = Path("synthetic-data/round2")
 OUTPUT_DIR = Path("outputs")
@@ -74,8 +77,9 @@ def main() -> None:
     )
 
     user_message = (
-        "I'm including some updated and new documents below. Some of them "
-        "contradict things you learned in our previous session.\n\n"
+        "I'm including a new objection from the latest call and a competitive "
+        "update from product management below. Some of this updates what you "
+        "learned in our previous session.\n\n"
         "Please:\n"
         "1. First, check your memory store at /mnt/memory/ to see what you "
         "already know.\n"
