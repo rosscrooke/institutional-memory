@@ -1,0 +1,71 @@
+=== SESSION 1 ===
+Question: Tomorrow's call is the final pitch. What's our strategy?
+
+--- ANSWER ---
+Nothing in prior sessions covers Northwind strategy specifically, so I'm working entirely from the documents you've shared. Here's the full picture.
+
+---
+
+## Final Pitch Strategy — Northwind Bank
+
+### The room and what each person needs to leave with
+
+| Person | Role | Win condition for them |
+|---|---|---|
+| **Klara Voss** | Economic buyer | Break-even at month 22 holds up against *her* numbers, not ours |
+| **Raghav Iyer** | Streaming Tech Lead | A concrete bake-off cluster and a credible migration runbook in hand |
+| **Marcus Lehmann** | Security Architect | Paperwork on residency attestation already in review — he just needs a clear path to sign-off by end of Q1 |
+| **Hina Park** | SRE Lead | A tangible picture of what her on-call burden looks like *after* the migration |
+| **Owen Mbeki** | Sr. Platform Engineer | Already closed on the open-source concern — keep him warm, don't re-litigate it |
+
+---
+
+### The three things to land (state them on slide 1)
+
+1. Helios is cheaper than status quo on a fully-loaded TCO basis.
+2. The migration path is safe and incremental — payments topic is last, with a parallel-run period.
+3. The next step is a bake-off, not a contract — Raghav controls the timeline.
+
+---
+
+### Slide-by-slide priorities
+
+**Slide 2 (their pain):** Open with Hina's exact quote: *"Every weekend on-call is at least one Kafka page."* Don't paraphrase. The room will nod.
+
+**Slide 6 (TCO — the hinge):** This is the make-or-break moment with Klara. Acknowledge up front that the incident-hours input is *your estimate*, not hers. Offer to re-run the model live with her numbers after the call. The point to land is the structure: $400k Flink savings + ~$700k incident-hours savings flips the apparent 28% premium into a net saving from year 2. The break-even chart is what she'll photograph.
+
+**Slide 7 (Marcus's slide):** Don't oversell. Point at the attestation, confirm end-of-Q1 review timeline, and move on. Marcus is running a process, not a persuasion exercise.
+
+**Slide 9 (migration):** This is Raghav's slide. Spend real time here. The v0.4 runbook should go in the room if delivery has cleared it — a physical appendix is more credible than a promise. Reinforce: wire-protocol compatible, connection-string-only change for Flink jobs, low-criticality topics first, payments last after parallel run. Named Helios SE embedded at no extra cost.
+
+**Slide 11 (pricing):** Get ahead of the lock-in concern before Klara raises it again. CPI-capped 3-year term, documented annual exportability test. Legal review of price-lock language is already in progress — flag that, don't hide it.
+
+---
+
+### Three open issues to resolve *before* you walk in
+
+1. **Bake-off scheduling (Raghav):** Commit on the call to having a Frankfurt cluster provisioned within 7 days. Have the cluster ready the moment they say yes — don't let this slip again.
+2. **TCO model inputs (Klara):** Either get her incident-hours number ahead of the call or be ready to show the model parametrically so she can plug her own numbers in real time.
+3. **Migration runbook (Raghav):** Get delivery to do a final review tonight. If it's not clean, don't leave it in the room — but don't pretend it doesn't exist either. "v0.4, final review in progress, will send by Friday" is acceptable.
+
+---
+
+### What NOT to do
+
+- **Don't get drawn into a Kafka feature comparison.** If Raghav goes there, park it for the technical session.
+- **Don't pitch the analytics layer or AI features.** They have Redshift/EMR working; touching it creates anxiety, not value.
+- **Don't oversell Marcus's slide.** The attestation and SOC 2/ISO 27001/PCI DSS reports are the answer; additional salesmanship will make him suspicious.
+
+---
+
+### Close — three concrete asks on slide 12
+
+| Ask | Owner | Timeline |
+|---|---|---|
+| Provide bake-off cluster | Helios SE | Within 7 days of this call |
+| Residency attestation review | Marcus | End of Q1 |
+| TCO model review with finance team | Klara | Mutually agreed date |
+
+The deal hinges on Raghav's bake-off and Klara's TCO sign-off. Everything else is moving in the right direction. A clean close tomorrow means leaving the room with all three asks agreed and a date on Raghav's calendar.
+
+---I've saved everything to memory for future sessions. The strategy above is your playbook — the short version is: **win Klara on TCO, win Raghav with a cluster in 7 days and a clean runbook, let Marcus's process run, and close with three concrete dated asks.**

@@ -124,7 +124,8 @@ def main() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
     out = OUTPUT_DIR / "session1.txt"
     out.write_text(
-        f"=== SESSION 1 ===\nQuestion: {TEST_QUESTION}\n\n--- ANSWER ---\n{final_text}\n"
+        f"=== SESSION 1 ===\nQuestion: {TEST_QUESTION}\n\n--- ANSWER ---\n{final_text}\n",
+        encoding="utf-8",
     )
     print(f"\nSaved to {out}")
     print(f"\nInspect what the agent remembered:  python inspect_memory.py")

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REKALL — Memory Diff</title>
+  <style>
+
+    :root {
+      --bg:        #050200;
+      --surface:   #0e0600;
+      --surface2:  #160900;
+      --mars:      #c73000;
+      --mars2:     #ff4400;
+      --mars-glow: rgba(199,48,0,.35);
+      --cyan:      #00d4f5;
+      --cyan2:     #00ffff;
+      --cyan-glow: rgba(0,212,245,.25);
+      --amber:     #ffaa00;
+      --amber-glow:rgba(255,170,0,.25);
+      --text:      #f0dfc0;
+      --muted:     #7a6040;
+      --border:    #2a1200;
+      --green:     #00ff88;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Courier New', Consolas, monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanlines overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,.18) 2px,
+        rgba(0,0,0,.18) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Atmospheric glow ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 1200px; height: 600px;
+      background: radial-gradient(ellipse, rgba(199,48,0,.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 24px 48px;
+      border-bottom: 1px solid var(--mars);
+      background: linear-gradient(180deg, #1a0500 0%, #050200 100%);
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 900px 300px at 50% 100%, rgba(199,48,0,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .rekall-logo {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 900;
+      letter-spacing: .15em;
+      color: var(--mars2);
+      text-shadow:
+        0 0 10px var(--mars2),
+        0 0 30px var(--mars),
+        0 0 80px rgba(199,48,0,.5),
+        0 0 120px rgba(199,48,0,.25);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .rekall-sub {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: clamp(.6rem, 2vw, .85rem);
+      letter-spacing: .5em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .rekall-tagline {
+      font-size: .95rem;
+      color: var(--cyan);
+      text-shadow: 0 0 12px var(--cyan-glow);
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+    }
+    .rekall-tagline strong {
+      color: var(--cyan2);
+      text-shadow: 0 0 20px var(--cyan2), 0 0 40px rgba(0,255,255,.4);
+    }
+    .session-ids {
+      display: inline-flex;
+      gap: 32px;
+      margin-top: 24px;
+      border: 1px solid var(--border);
+      border-top-color: var(--mars);
+      background: rgba(14,6,0,.8);
+      padding: 12px 28px;
+      border-radius: 2px;
+    }
+    .session-id {
+      font-size: .72rem;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .session-id span {
+      display: block;
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 3px;
+      color: #4a3020;
+    }
+    .session-id.active { color: var(--cyan); }
+    .session-id.active span { color: var(--mars); }
+
+    /* ── Main content ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .65rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--mars);
+      border-left: 2px solid var(--mars);
+      padding-left: 10px;
+      margin: 48px 0 20px;
+    }
+
+    /* ── DELTA CARDS ── */
+    .deltas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .delta {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .delta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(199,48,0,.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .delta.new    { border-top: 2px solid var(--cyan);  }
+    .delta.change { border-top: 2px solid var(--amber); }
+    .delta.drop   { border-top: 2px solid var(--mars);  }
+
+    .delta-type {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .58rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .delta-type::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .delta.new    .delta-type { color: var(--cyan);  }
+    .delta.new    .delta-type::before { background: var(--cyan);  box-shadow: 0 0 8px var(--cyan); }
+    .delta.change .delta-type { color: var(--amber); }
+    .delta.change .delta-type::before { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .delta.drop   .delta-type { color: var(--mars2); }
+    .delta.drop   .delta-type::before { background: var(--mars2); box-shadow: 0 0 8px var(--mars2); }
+
+    .delta h3 {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .delta p {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .delta p strong { color: var(--text); }
+
+    /* ── SIDE-BY-SIDE DIFF ── */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      border: 1px solid var(--border);
+    }
+
+    .diff-panel {
+      background: var(--surface);
+    }
+    .diff-header {
+      padding: 14px 20px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .68rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .diff-header.s1 {
+      color: var(--mars2);
+      border-bottom-color: rgba(199,48,0,.4);
+      background: rgba(199,48,0,.06);
+      text-shadow: 0 0 10px var(--mars-glow);
+    }
+    .diff-header.s2 {
+      color: var(--cyan);
+      border-bottom-color: rgba(0,212,245,.4);
+      background: rgba(0,212,245,.06);
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+    .diff-header .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .diff-header.s1 .dot { background: var(--mars2); box-shadow: 0 0 8px var(--mars2); }
+    .diff-header.s2 .dot { background: var(--cyan);  box-shadow: 0 0 8px var(--cyan);  }
+
+    .diff-body {
+      padding: 0;
+      font-size: .76rem;
+      line-height: 1.7;
+    }
+
+    .diff-section {
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-section-title {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .6rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: 10px 20px 8px;
+      color: #4a3020;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-section-body {
+      padding: 14px 20px;
+      color: var(--muted);
+    }
+
+    /* Row types */
+    .row { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0; }
+    .row-marker {
+      font-size: .65rem;
+      width: 12px;
+      flex-shrink: 0;
+      margin-top: 3px;
+      text-align: center;
+    }
+
+    .row-same   .row-marker { color: #2a1600; }
+    .row-same   .row-text   { color: var(--muted); }
+
+    .row-add    { background: rgba(0,212,245,.06); border-radius: 2px; }
+    .row-add    .row-marker { color: var(--cyan); }
+    .row-add    .row-text   { color: var(--cyan2); text-shadow: 0 0 8px rgba(0,255,255,.3); }
+
+    .row-change { background: rgba(255,170,0,.06); border-radius: 2px; }
+    .row-change .row-marker { color: var(--amber); }
+    .row-change .row-text   { color: var(--amber); }
+
+    .row-del    { background: rgba(199,48,0,.06); border-radius: 2px; }
+    .row-del    .row-marker { color: var(--mars2); }
+    .row-del    .row-text   { color: #5a2010; text-decoration: line-through; }
+
+    .row-text { flex: 1; font-size: .76rem; }
+
+    em-new {
+      display: inline;
+      color: var(--cyan2);
+      text-shadow: 0 0 6px var(--cyan-glow);
+      font-style: normal;
+    }
+    em-warn {
+      display: inline;
+      color: var(--amber);
+      font-style: normal;
+    }
+
+    /* ── STAKEHOLDER TABLE ── */
+    .stk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stk-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .75rem;
+    }
+    .stk-table th {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .55rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .stk-table td {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .stk-table .name { color: var(--text); font-weight: bold; }
+    .stk-table .role { color: var(--muted); font-size: .68rem; }
+    .stk-table td.new-row { background: rgba(0,212,245,.05); color: var(--cyan); }
+    .stk-table td.changed { background: rgba(255,170,0,.05); color: var(--amber); }
+    .stk-table td.same    { color: var(--muted); }
+    .stk-label {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .58rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      padding: 6px 12px;
+      display: inline-block;
+    }
+    .stk-label.s1 { color: var(--mars2); border: 1px solid rgba(199,48,0,.3); }
+    .stk-label.s2 { color: var(--cyan);  border: 1px solid rgba(0,212,245,.3); }
+
+    /* ── PITCH SEQUENCE ── */
+    .sequence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .sequence-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .seq-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 2px;
+      border: 1px solid transparent;
+      font-size: .78rem;
+    }
+    .seq-num {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .65rem;
+      width: 22px;
+      flex-shrink: 0;
+      color: #3a1800;
+      margin-top: 2px;
+    }
+    .seq-item.same   { border-color: var(--border); color: var(--muted); }
+    .seq-item.same .seq-num { color: #3a1800; }
+    .seq-item.new    { border-color: rgba(0,212,245,.25); background: rgba(0,212,245,.05); color: var(--cyan2); }
+    .seq-item.new .seq-num  { color: var(--cyan); }
+    .seq-item.moved  { border-color: rgba(255,170,0,.25); background: rgba(255,170,0,.05); color: var(--amber); }
+    .seq-item.moved .seq-num { color: var(--amber); }
+
+    /* ── CLOSE comparison ── */
+    .close-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .close-list { display: flex; flex-direction: column; gap: 8px; }
+    .close-item {
+      padding: 10px 14px;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      font-size: .78rem;
+    }
+    .close-item.same    { color: var(--muted); }
+    .close-item.new     { border-color: rgba(0,212,245,.3); background: rgba(0,212,245,.05); color: var(--cyan); }
+    .close-item.changed { border-color: rgba(255,170,0,.3); background: rgba(255,170,0,.05); color: var(--amber); }
+    .close-item strong  { color: var(--text); }
+
+    /* ── Memory section ── */
+    .memory-box {
+      border: 1px solid rgba(0,212,245,.2);
+      border-radius: 2px;
+      background: rgba(0,212,245,.03);
+      padding: 20px 24px;
+    }
+    .memory-box h3 {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan-glow);
+      margin-bottom: 14px;
+    }
+    .memory-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .memory-file {
+      border: 1px solid rgba(0,212,245,.2);
+      padding: 6px 12px;
+      font-size: .72rem;
+      color: var(--cyan);
+      background: rgba(0,212,245,.05);
+    }
+    .memory-file.updated {
+      border-color: rgba(255,170,0,.4);
+      color: var(--amber);
+      background: rgba(255,170,0,.06);
+    }
+
+    /* ── Verdict ── */
+    .verdict {
+      border: 1px solid var(--mars);
+      background: linear-gradient(135deg, rgba(199,48,0,.08) 0%, rgba(0,0,0,0) 60%);
+      border-radius: 2px;
+      padding: 28px 32px;
+      text-align: center;
+      margin-top: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .verdict::before {
+      content: 'REKALL';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 8rem;
+      font-weight: 900;
+      color: rgba(199,48,0,.04);
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: .2em;
+    }
+    .verdict-title {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--mars2);
+      text-shadow: 0 0 20px var(--mars-glow);
+      letter-spacing: .1em;
+      margin-bottom: 12px;
+    }
+    .verdict-body {
+      font-size: .85rem;
+      color: var(--muted);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+    .verdict-body strong { color: var(--text); }
+    .verdict-body em-new { font-style: normal; color: var(--cyan2); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      border-top-color: rgba(199,48,0,.3);
+      text-align: center;
+      padding: 20px;
+      font-size: .65rem;
+      letter-spacing: .12em;
+      color: #3a1800;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 800px) {
+      .diff-grid      { grid-template-columns: 1fr; }
+      .stk-grid       { grid-template-columns: 1fr; }
+      .sequence-grid  { grid-template-columns: 1fr; }
+      .close-grid     { grid-template-columns: 1fr; }
+    }
+
+    /* ── Animations ── */
+    @keyframes flicker {
+      0%,100%  { opacity: 1; }
+      92%      { opacity: 1; }
+      93%      { opacity: .8; }
+      94%      { opacity: 1; }
+      96%      { opacity: .9; }
+      97%      { opacity: 1; }
+    }
+    .rekall-logo { animation: flicker 8s ease-in-out infinite; }
+
+    @keyframes pulse-border {
+      0%,100% { box-shadow: 0 0 6px rgba(0,212,245,.15); }
+      50%     { box-shadow: 0 0 18px rgba(0,212,245,.4); }
+    }
+    .memory-box { animation: pulse-border 4s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="rekall-logo">REKALL</div>
+  <div class="rekall-sub">Memory Implant Systems &nbsp;·&nbsp; Diff Report &nbsp;·&nbsp; 2026-06-02</div>
+  <div class="rekall-tagline">
+    <strong>SAME QUESTION.</strong> &nbsp;TWO SESSIONS. &nbsp;<strong>THE AGENT REMEMBERED.</strong>
+  </div>
+  <div class="session-ids">
+    <div class="session-id">
+      <span>Session 1</span>
+      Round 1 docs only · No prior memory
+    </div>
+    <div class="session-id">
+      <span>⟵ Memory stored ⟶</span>
+      northwind-bank-presales.md
+    </div>
+    <div class="session-id active">
+      <span>Session 2</span>
+      Memory + Round 2 docs · Conflicts reconciled
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- WHAT CHANGED -->
+  <div class="section-label">// MEMORY DELTA — KEY CHANGES</div>
+  <div class="deltas">
+
+    <div class="delta new">
+      <div class="delta-type">NEW INTELLIGENCE</div>
+      <h3>Sven Aaltonen — New Blocker</h3>
+      <p>New CISO not in Session 1 at all. Session 2 leads with his board mandate: <strong>active-active failover, sub-5s RPO</strong>. Helios shipped this GA on 2026-05-25. StreamCorp cannot match it.</p>
+    </div>
+
+    <div class="delta new">
+      <div class="delta-type">NEW INTELLIGENCE</div>
+      <h3>StreamCorp Price Cut</h3>
+      <p>StreamCorp dropped to <strong>$0.88/GB</strong> (was $1.10). Session 2 reframes this as a TCO argument in Helios's favour: their price excludes active-active, which wipes out the advantage.</p>
+    </div>
+
+    <div class="delta change">
+      <div class="delta-type">STRUCTURAL CHANGE</div>
+      <h3>Deck Resequenced</h3>
+      <p>Session 1: open with Hina's pain, TCO on slide 6, pricing on slide 11.<br/>
+      Session 2: <strong>resilience slide moves before pricing</strong> — Sven's objection must be answered before the room hears a number.</p>
+    </div>
+
+    <div class="delta change">
+      <div class="delta-type">UPGRADED ANSWER</div>
+      <h3>Residency Now GA</h3>
+      <p>Session 1 relied on an attestation in review. Session 2: <strong>broker-level record pinning is now GA</strong> — hardware enforced, customer-controlled audit topic. Marcus's objection moves from open to closed.</p>
+    </div>
+
+    <div class="delta new">
+      <div class="delta-type">NEW CLOSE ELEMENT</div>
+      <h3>Named TAM Offer</h3>
+      <p>Not in Session 1. Session 2 adds: offer <strong>named TAM + weekly check-ins for 90 days</strong> post-cutover as a concession to Sven. (Requires internal delivery sign-off first.)</p>
+    </div>
+
+    <div class="delta drop">
+      <div class="delta-type">DEPRIORITISED</div>
+      <h3>Owen Mbeki + Hina Park</h3>
+      <p>Session 1 gave both a named win condition. Session 2 drops Owen entirely and reduces Hina to a cheat-sheet line. The new critical path runs through <strong>Sven → Klara → Marcus → Raghav</strong>.</p>
+    </div>
+
+  </div>
+
+
+  <!-- PITCH SEQUENCE DIFF -->
+  <div class="section-label">// PITCH SEQUENCE — BEFORE vs. AFTER</div>
+  <div class="sequence-grid">
+    <div>
+      <div class="stk-label s1">SESSION 1</div>
+      <div class="sequence-list">
+        <div class="seq-item same"><div class="seq-num">01</div><div>Open: Hina's pain quote ("Every weekend on-call is at least one Kafka page")</div></div>
+        <div class="seq-item same"><div class="seq-num">02</div><div>Stakeholder win conditions (Klara, Raghav, Marcus, Hina, Owen)</div></div>
+        <div class="seq-item same"><div class="seq-num">03</div><div>TCO — the hinge (slide 6). Flink savings + incident hours flip the 28% premium</div></div>
+        <div class="seq-item same"><div class="seq-num">04</div><div>Marcus's residency slide (attestation in review, don't oversell)</div></div>
+        <div class="seq-item same"><div class="seq-num">05</div><div>Migration runbook (Raghav's slide — physical appendix)</div></div>
+        <div class="seq-item moved"><div class="seq-num">06</div><div>Pricing / lock-in (slide 11 — CPI-capped term, legal review in progress)</div></div>
+        <div class="seq-item same"><div class="seq-num">07</div><div>Close: bake-off cluster · residency attestation · TCO model review</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="stk-label s2">SESSION 2</div>
+      <div class="sequence-list">
+        <div class="seq-item new"><div class="seq-num">01</div><div>Open: Active-active resilience — Sven's board mandate. GA 2026-05-25. StreamCorp can't match.</div></div>
+        <div class="seq-item new"><div class="seq-num">02</div><div>Acknowledge StreamCorp price cut proactively — reframe as TCO argument</div></div>
+        <div class="seq-item same"><div class="seq-num">03</div><div>TCO — Helios active-active is included in Enterprise. StreamCorp's price excludes it.</div></div>
+        <div class="seq-item new"><div class="seq-num">04</div><div>Residency pinning now GA — broker-level, hardware enforced. Marcus: open → closed.</div></div>
+        <div class="seq-item same"><div class="seq-num">05</div><div>Migration runbook v0.4 + bake-off cluster (Raghav)</div></div>
+        <div class="seq-item moved"><div class="seq-num">06</div><div>Pricing — hold list price. Discount only via standard approval flow.</div></div>
+        <div class="seq-item new"><div class="seq-num">07</div><div>Close: Named TAM + 90-day check-ins (Sven) · runbook final review · bake-off cluster · deck v3.2</div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- STAKEHOLDER TABLE DIFF -->
+  <div class="section-label">// STAKEHOLDER MAP — BEFORE vs. AFTER</div>
+  <div class="stk-grid">
+
+    <div>
+      <div class="stk-label s1">SESSION 1</div>
+      <table class="stk-table">
+        <thead>
+          <tr>
+            <th>Person</th>
+            <th>Win condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="name">Klara Voss</div><div class="role">Economic buyer</div></td>
+            <td class="same">Break-even at month 22 holds up against her numbers</td>
+          </tr>
+          <tr>
+            <td><div class="name">Raghav Iyer</div><div class="role">Streaming Tech Lead</div></td>
+            <td class="same">Bake-off cluster + credible migration runbook</td>
+          </tr>
+          <tr>
+            <td><div class="name">Marcus Lehmann</div><div class="role">Security Architect</div></td>
+            <td class="same">Clear path to residency attestation sign-off by end of Q1</td>
+          </tr>
+          <tr>
+            <td><div class="name">Hina Park</div><div class="role">SRE Lead</div></td>
+            <td class="same">Tangible picture of post-migration on-call burden</td>
+          </tr>
+          <tr>
+            <td><div class="name">Owen Mbeki</div><div class="role">Sr. Platform Engineer</div></td>
+            <td class="same">Open-source concern already closed — keep warm</td>
+          </tr>
+          <tr style="opacity:.3">
+            <td colspan="2" style="text-align:center; font-size:.68rem; color:var(--muted);">— CISO not in room / not mentioned —</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="stk-label s2">SESSION 2</div>
+      <table class="stk-table">
+        <thead>
+          <tr>
+            <th>Person</th>
+            <th>Their answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="new-row"><div class="name" style="color:var(--cyan2)">Sven Aaltonen</div><div class="role" style="color:#007a8a">CISO — NEW</div></td>
+            <td class="new-row">Active-active GA · Frankfurt↔Dublin 12ms · tested 1.2M/sec · StreamCorp can't match</td>
+          </tr>
+          <tr>
+            <td><div class="name">Klara Voss</div><div class="role">Economic buyer</div></td>
+            <td class="changed">StreamCorp's $0.88/GB excludes active-active. Full TCO favours Helios.</td>
+          </tr>
+          <tr>
+            <td><div class="name">Marcus Lehmann</div><div class="role">Security Architect</div></td>
+            <td class="changed">Broker-level pinning GA + signed attestation = CLOSED</td>
+          </tr>
+          <tr>
+            <td><div class="name">Raghav Iyer</div><div class="role">Streaming Tech Lead</div></td>
+            <td class="same">Bake-off cluster · runbook v0.4 · topic-by-topic cutover</td>
+          </tr>
+          <tr style="opacity:.35">
+            <td><div class="name">Hina Park</div><div class="role">SRE Lead</div></td>
+            <td class="same" style="font-size:.68rem">Automatic failover → no 3am pager for region events</td>
+          </tr>
+          <tr style="opacity:.2">
+            <td><div class="name">Owen Mbeki</div><div class="role">Sr. Platform Engineer</div></td>
+            <td class="same" style="font-size:.68rem">Not mentioned — deprioritised</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- MEMORY STATE -->
+  <div class="section-label">// MEMORY STORE — STATE AFTER SESSION 2</div>
+  <div class="memory-box">
+    <h3>// /mnt/memory/institutional-memory/</h3>
+    <div class="memory-files">
+      <div class="memory-file updated">northwind-bank-presales.md &nbsp;↑ UPDATED</div>
+      <div class="memory-file">gaps-and-open-questions.md &nbsp;(stale)</div>
+    </div>
+    <div style="margin-top:16px; font-size:.75rem; color:var(--muted); line-height:1.8;">
+      northwind-bank-presales.md now contains:
+      Sven's active-active mandate · Helios GA 2026-05-25 · StreamCorp price cut details ·
+      broker-level residency pinning · updated stakeholder map · deck v3.2 sequence ·
+      open internal actions (TAM sign-off, runbook review, bake-off cluster)
+    </div>
+  </div>
+
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div class="verdict-title">MEMORY RECONCILIATION: COMPLETE</div>
+    <div class="verdict-body">
+      Session 1 answered from documents alone — no prior context.
+      The agent saved the strategy to memory.
+      Session 2 read that memory first, encountered two contradictions
+      (<em-new>Sven's new blocker</em-new> and <em-new>StreamCorp's price cut</em-new>),
+      and <strong>updated its position</strong> — it didn't append, it reconciled.
+      The result: a materially sharper answer that anticipated the hardest objection in the room
+      before it was raised.
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  REKALL INC. &nbsp;·&nbsp; WE CAN REMEMBER IT FOR YOU WHOLESALE &nbsp;·&nbsp; TOTAL-RECALL v2.0
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>total-recall — Project Summary</title>
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #151820;
+      --surface2: #1d2230;
+      --border: #2a3040;
+      --accent: #6e56cf;
+      --accent2: #9b7ef8;
+      --green: #3ecf8e;
+      --amber: #f59e0b;
+      --red: #f43f5e;
+      --blue: #38bdf8;
+      --text: #e2e8f0;
+      --muted: #7c8a9e;
+      --code: #a78bfa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #0d0f14 0%, #151830 60%, #1a1040 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 40px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(110,86,207,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(110,86,207,.15);
+      border: 1px solid rgba(110,86,207,.35);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: var(--accent2);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin-inline: auto;
+    }
+    .hero-punchline {
+      margin-top: 28px;
+      display: inline-block;
+      background: rgba(62,207,142,.08);
+      border: 1px solid rgba(62,207,142,.25);
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: .95rem;
+      color: var(--green);
+    }
+    .hero-punchline strong { color: #fff; }
+
+    /* ── Layout ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+    section { margin-top: 64px; }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: #fff;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .flow-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .step {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 22px 20px;
+      position: relative;
+    }
+    .step-num {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .step h3 {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .step p {
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .step code {
+      font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+      font-size: .76rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 5px;
+      color: var(--code);
+    }
+    .step.accent-green { border-color: rgba(62,207,142,.35); }
+    .step.accent-purple { border-color: rgba(110,86,207,.45); }
+    .step.accent-blue   { border-color: rgba(56,189,248,.35); }
+    .step.accent-amber  { border-color: rgba(245,158,11,.35); }
+
+    /* connector arrow */
+    .arrow-down {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 42px;
+      position: relative;
+    }
+    .arrow-down::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0; bottom: 12px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--border), transparent);
+    }
+    .arrow-down::after {
+      content: '▼';
+      position: absolute;
+      bottom: 0;
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .arrow-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .arrow-right::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0; right: 12px;
+      height: 2px;
+      background: linear-gradient(to right, var(--border), transparent);
+      transform: translateY(-50%);
+    }
+    .arrow-right::after {
+      content: '▶';
+      position: absolute;
+      right: 0;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* ── Memory Store box ── */
+    .memory-store {
+      background: var(--surface2);
+      border: 2px solid rgba(110,86,207,.45);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-top: 28px;
+      position: relative;
+    }
+    .memory-store-label {
+      position: absolute;
+      top: -11px;
+      left: 22px;
+      background: var(--bg);
+      padding: 0 8px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .memory-files {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .memory-file {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: .78rem;
+    }
+    .memory-file .fname {
+      font-family: "Fira Code", Consolas, monospace;
+      color: var(--code);
+      font-size: .73rem;
+      margin-bottom: 3px;
+    }
+    .memory-file .fdesc {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    /* ── Sessions side by side ── */
+    .sessions-grid {
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr;
+      gap: 0;
+      align-items: start;
+    }
+    .session-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .session-header {
+      padding: 16px 20px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .session-header.s1 { background: rgba(56,189,248,.1); color: var(--blue); border-bottom: 1px solid rgba(56,189,248,.2); }
+    .session-header.s2 { background: rgba(62,207,142,.1); color: var(--green); border-bottom: 1px solid rgba(62,207,142,.2); }
+    .session-body { padding: 18px 20px; font-size: .82rem; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: .7rem;
+      font-weight: 600;
+    }
+    .tag.doc  { background: rgba(56,189,248,.1);  color: var(--blue);  border: 1px solid rgba(56,189,248,.2);  }
+    .tag.new  { background: rgba(245,158,11,.1);  color: var(--amber); border: 1px solid rgba(245,158,11,.2);  }
+    .tag.mem  { background: rgba(110,86,207,.1);  color: var(--accent2);border: 1px solid rgba(110,86,207,.2); }
+    .tag.out  { background: rgba(62,207,142,.1);  color: var(--green); border: 1px solid rgba(62,207,142,.2);  }
+    .session-q {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+    .session-q strong { color: var(--text); }
+    .vs-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .08em;
+    }
+    .improvement {
+      background: rgba(62,207,142,.06);
+      border: 1px solid rgba(62,207,142,.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: .78rem;
+      color: var(--green);
+      margin-top: 10px;
+    }
+    .improvement::before { content: '✓ '; }
+
+    /* ── Scenario ── */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .scenario-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .scenario-card h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scenario-card h3 .badge {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+    .scenario-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .scenario-card li {
+      font-size: .82rem;
+      color: var(--muted);
+      padding-left: 16px;
+      position: relative;
+    }
+    .scenario-card li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--border);
+    }
+
+    /* ── Stretch goals ── */
+    .goals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .goal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      position: relative;
+      transition: border-color .2s;
+    }
+    .goal-card:hover { border-color: var(--accent); }
+    .goal-tag {
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .done   { background: rgba(62,207,142,.12);  color: var(--green); }
+    .design { background: rgba(56,189,248,.1);   color: var(--blue);  }
+    .goal-card h3 { font-size: .85rem; font-weight: 700; margin-bottom: 5px; }
+    .goal-card p  { font-size: .78rem; color: var(--muted); }
+
+    /* ── Tech stack ── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .stack-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .stack-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .stack-card h3 { font-size: .85rem; font-weight: 700; margin-bottom: 3px; }
+    .stack-card p  { font-size: .78rem; color: var(--muted); }
+
+    /* ── How to run ── */
+    .run-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .run-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .run-step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .run-step-body h3 { font-size: .88rem; font-weight: 600; margin-bottom: 4px; }
+    .run-step-body p  { font-size: .8rem; color: var(--muted); }
+    pre.cmd {
+      font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+      font-size: .78rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--code);
+      margin-top: 8px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .sessions-grid   { grid-template-columns: 1fr; }
+      .vs-col          { display: none; }
+      .scenario-grid   { grid-template-columns: 1fr; }
+      .flow-row        { flex-direction: column; }
+      .arrow-right     { display: none; }
+    }
+
+    /* ── Animated memory pulse ── */
+    @keyframes pulse {
+      0%, 100% { opacity: .6; }
+      50%       { opacity: 1; }
+    }
+    .memory-store { animation: pulse 3s ease-in-out infinite; }
+
+    /* ── Lifecycle diagram labels ── */
+    .lifecycle {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr 60px 1fr 60px 1fr;
+      gap: 0;
+      align-items: center;
+    }
+    .lifecycle-arrow {
+      text-align: center;
+      font-size: 18px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-badge">🧠 Anthropic Managed Agents</div>
+  <h1>total-recall</h1>
+  <p class="hero-sub">An AI sales engineer that learns and improves across sessions — using Anthropic's Managed Agents memory store to retain institutional knowledge between calls.</p>
+  <div class="hero-punchline">
+    <strong>Same question. Two sessions.</strong> The agent answers better the second time — because it remembered.
+  </div>
+</div>
+
+<main>
+
+  <!-- ── PIPELINE ── -->
+  <section>
+    <h2>Pipeline <span class="pill">Core Build</span></h2>
+
+    <div class="flow">
+
+      <!-- Step 1 -->
+      <div class="flow-row">
+        <div class="step accent-purple">
+          <div class="step-num">Step 1</div>
+          <h3>Provision Agent</h3>
+          <p>Create the agent, environment, and memory store. IDs are saved to <code>.agent_id</code>, <code>.environment_id</code>, and <code>.memory_store_id</code> for reuse.</p>
+          <br/><code>python create_agent.py</code>
+        </div>
+      </div>
+
+      <div class="arrow-down"></div>
+
+      <!-- Step 2 -->
+      <div class="flow-row">
+        <div class="step accent-blue">
+          <div class="step-num">Step 2 — Session 1 (Baseline)</div>
+          <h3>First pitch strategy session</h3>
+          <p>Agent reads Round 1 docs (Northwind's stack, prior objections, pitch deck), answers the test question, and saves key facts to memory.</p>
+          <br/><code>python run_session_1.py</code> → <code>outputs/session1.txt</code>
+        </div>
+      </div>
+
+      <div class="arrow-down"></div>
+
+      <!-- Memory Store -->
+      <div class="memory-store">
+        <div class="memory-store-label">Persistent Memory Store — /mnt/memory/</div>
+        <p style="font-size:.82rem; color:var(--muted);">Mounted read/write in every session. Agent organizes its own files. New sessions read this store before doing anything else.</p>
+        <div class="memory-files">
+          <div class="memory-file">
+            <div class="fname">prospect_environment.md</div>
+            <div class="fdesc">Northwind's stack, constraints, residency</div>
+          </div>
+          <div class="memory-file">
+            <div class="fname">objections.md</div>
+            <div class="fdesc">All objections + latest answers</div>
+          </div>
+          <div class="memory-file">
+            <div class="fname">competitive_intel.md</div>
+            <div class="fdesc">Competitor updates, dated entries</div>
+          </div>
+          <div class="memory-file">
+            <div class="fname">pitch_strategy.md</div>
+            <div class="fdesc">Current approach, revision history</div>
+          </div>
+          <div class="memory-file">
+            <div class="fname">contacts_and_roles.md</div>
+            <div class="fdesc">Key people, titles, concerns</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-down"></div>
+
+      <!-- Step 3 -->
+      <div class="flow-row">
+        <div class="step accent-green">
+          <div class="step-num">Step 3 — Session 2 (Learning)</div>
+          <h3>Session with new contradictions</h3>
+          <p>Agent reads memory first, then round 2 docs with a new CISO blocker and competitive updates. It reconciles conflicts — <strong>updates, doesn't append</strong> — then answers sharper.</p>
+          <br/><code>python run_session_2.py</code> → <code>outputs/session2.txt</code>
+        </div>
+      </div>
+
+      <div class="arrow-down"></div>
+
+      <!-- Step 4 -->
+      <div class="flow-row">
+        <div class="step accent-amber">
+          <div class="step-num">Step 4 — Compare</div>
+          <h3>Before vs. after — the proof</h3>
+          <p>Side-by-side diff reveals the agent anticipates the new objection, cites the new capability, and resequences the pitch — because it remembered.</p>
+          <br/><code>diff outputs/session1.txt outputs/session2.txt</code>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SESSION COMPARISON ── -->
+  <section>
+    <h2>Session Comparison <span class="pill">The Proof</span></h2>
+
+    <div class="sessions-grid">
+      <!-- Session 1 -->
+      <div class="session-card">
+        <div class="session-header s1">Session 1 — Baseline</div>
+        <div class="session-body">
+          <div class="tag-row">
+            <span class="tag doc">helios-stack-overview.md</span>
+            <span class="tag doc">objections-log.md</span>
+            <span class="tag doc">pitch-deck.md</span>
+            <span class="tag out">→ session1.txt</span>
+          </div>
+          <p style="font-size:.8rem; color:var(--muted);">Agent reads Northwind's environment, 5 prior objections, and the 12-slide deck. Answers from what it sees in context.</p>
+          <div class="session-q">
+            <strong>Q:</strong> "Tomorrow's call is the final pitch. What's our strategy?"
+          </div>
+          <div style="margin-top:12px; font-size:.8rem; color:var(--muted);">Answer covers: latency SLA, data residency, TCO, migration risk, vendor lock-in.</div>
+        </div>
+      </div>
+
+      <!-- VS -->
+      <div class="vs-col">VS</div>
+
+      <!-- Session 2 -->
+      <div class="session-card">
+        <div class="session-header s2">Session 2 — Learned</div>
+        <div class="session-body">
+          <div class="tag-row">
+            <span class="tag mem">memory: all prior facts</span>
+            <span class="tag new">new-objection-2026-05-22.md</span>
+            <span class="tag new">competitive-update-2026-05-25.md</span>
+            <span class="tag out">→ session2.txt</span>
+          </div>
+          <p style="font-size:.8rem; color:var(--muted);">Agent reads memory first, then encounters a new CISO (Sven) who mandates active-active failover. Also: StreamCorp cut prices, but Helios shipped multi-region.</p>
+          <div class="session-q">
+            <strong>Same Q:</strong> "Tomorrow's call is the final pitch. What's our strategy?"
+          </div>
+          <div class="improvement">Anticipates active-active / RPO objection before it's raised</div>
+          <div class="improvement">Cites Helios's new multi-region capability as direct answer</div>
+          <div class="improvement">Addresses StreamCorp's 20% price cut with new connector differentiator</div>
+          <div class="improvement">Resequences: resilience slide before pricing</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SCENARIO ── -->
+  <section>
+    <h2>The Scenario <span class="pill">Card D · Sales Engineer</span></h2>
+
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <h3>
+          <span style="font-size:1.2rem">🚀</span> Helios
+          <span class="badge" style="background:rgba(110,86,207,.12); color:var(--accent2);">Vendor</span>
+        </h3>
+        <ul>
+          <li>Real-time data-streaming platform</li>
+          <li>Native active-active multi-region (just shipped)</li>
+          <li>Data residency pinning (EU + US)</li>
+          <li>SOC2 / PCI compliant</li>
+          <li>Handles 2M events/sec peak</li>
+          <li>Managed Flink connectors</li>
+        </ul>
+      </div>
+
+      <div class="scenario-card">
+        <h3>
+          <span style="font-size:1.2rem">🏦</span> Northwind Bank
+          <span class="badge" style="background:rgba(56,189,248,.1); color:var(--blue);">Prospect</span>
+        </h3>
+        <ul>
+          <li>Fintech, self-managed Kafka on-prem today</li>
+          <li>AWS analytics stack</li>
+          <li>EU + US data residency requirements</li>
+          <li>New CISO: Sven Aaltonen</li>
+          <li>Sven's mandate: &lt;5s RPO, active-active failover</li>
+          <li>Also evaluating: StreamCorp (just cut prices 20%)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STRETCH GOALS ── -->
+  <section>
+    <h2>Stretch Goals <span class="pill">S1 – S9</span></h2>
+
+    <div class="goals-grid">
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S1 — Memory Policy</h3>
+        <p>Explicit ALWAYS/NEVER lists in the system prompt for what to memorize.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag done">Implemented</span>
+        <h3>S2 — Memory Curator</h3>
+        <p>A Haiku 4.5 sub-agent that periodically cleans the memory store: merges duplicates, flags conflicts, prunes stale entries.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag done">Implemented</span>
+        <h3>S3 — Adversarial Round</h3>
+        <p>Undated contradictions arrive. Agent must flag the uncertainty rather than silently overwriting.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag done">Implemented</span>
+        <h3>S4 — Introspection</h3>
+        <p>No new docs. Agent is asked: "What have you learned?" — pure memory recall and synthesis.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S5 — Per-Tenant Memory</h3>
+        <p>Isolated memory stores per customer_id. Northwind and Globex never share knowledge.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S6 — Scheduled Ingestion</h3>
+        <p>Daily inbox scan automatically adds to memory — no human in the loop.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S7 — Long-Context Compaction</h3>
+        <p>20+ turn session; agent does in-session memory management and writes a summary to the store at the end.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S8 — Memory Diff View</h3>
+        <p>Snapshot memory before and after a session; surface a visual diff of what changed.</p>
+      </div>
+      <div class="goal-card">
+        <span class="goal-tag design">Designed</span>
+        <h3>S9 — Topic Sub-Agents</h3>
+        <p>Expert routing: a router agent dispatches to specialized agents per memory category (competitive, technical, legal).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TECH STACK ── -->
+  <section>
+    <h2>Tech Stack</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(110,86,207,.12);">🤖</div>
+        <div>
+          <h3>Managed Agents</h3>
+          <p>Cloud-hosted agent runtime. Handles environment lifecycle, session isolation, and tool execution.</p>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(62,207,142,.1);">💾</div>
+        <div>
+          <h3>memory_stores API</h3>
+          <p>Path-organized filesystem mounted at <code>/mnt/memory/</code> — persists across sessions, agent writes its own schema.</p>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(56,189,248,.1);">⚡</div>
+        <div>
+          <h3>Claude Sonnet 4.6</h3>
+          <p>Main agent model. Claude Haiku 4.5 used for the memory curator sub-agent (S2) for cost efficiency.</p>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(245,158,11,.1);">🐍</div>
+        <div>
+          <h3>Anthropic Python SDK</h3>
+          <p><code>client.beta.sessions</code> — streaming events API for interactive multi-turn sessions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW TO RUN ── -->
+  <section>
+    <h2>How to Run <span class="pill">5 steps · ~30 min</span></h2>
+
+    <div class="run-steps">
+      <div class="run-step">
+        <div class="run-step-num">1</div>
+        <div class="run-step-body">
+          <h3>Set your API key</h3>
+          <p>You need an Anthropic API key with Managed Agents access.</p>
+          <pre class="cmd">export ANTHROPIC_API_KEY="sk-ant-..."</pre>
+        </div>
+      </div>
+      <div class="run-step">
+        <div class="run-step-num">2</div>
+        <div class="run-step-body">
+          <h3>Provision the agent</h3>
+          <p>Creates the agent, environment, and memory store. Writes IDs to <code>.agent_id</code> etc.</p>
+          <pre class="cmd">python create_agent.py</pre>
+        </div>
+      </div>
+      <div class="run-step">
+        <div class="run-step-num">3</div>
+        <div class="run-step-body">
+          <h3>Run Session 1 — baseline</h3>
+          <p>Agent reads round 1 docs and answers the pitch strategy question.</p>
+          <pre class="cmd">python run_session_1.py</pre>
+        </div>
+      </div>
+      <div class="run-step">
+        <div class="run-step-num">4</div>
+        <div class="run-step-body">
+          <h3>Inspect memory (optional)</h3>
+          <p>List and preview everything the agent saved.</p>
+          <pre class="cmd">python inspect_memory.py</pre>
+        </div>
+      </div>
+      <div class="run-step">
+        <div class="run-step-num">5</div>
+        <div class="run-step-body">
+          <h3>Run Session 2 — learning</h3>
+          <p>Agent reads memory first, encounters contradictions, reconciles, and answers better.</p>
+          <pre class="cmd">python run_session_2.py
+diff outputs/session1.txt outputs/session2.txt</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  total-recall &nbsp;·&nbsp; Anthropic Managed Agents Demo &nbsp;·&nbsp; Card D · Sales Engineer
+</footer>
+
+</body>
+</html>
