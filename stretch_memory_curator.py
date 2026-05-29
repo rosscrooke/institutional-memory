@@ -21,6 +21,13 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()  # pick up ANTHROPIC_API_KEY from a local .env if present
+except ImportError:
+    pass
+
 
 CURATOR_SYSTEM_PROMPT = """\
 You are the Memory Curator. Your only job is memory hygiene.
@@ -29,6 +36,9 @@ You have access to another agent's memory store (read/write). On each run:
 
 1. List every entry in the store.
 2. Merge any duplicates — keep the most recent version, link the others.
+   In this sales context specifically: merge superseded objection answers so
+   only our latest best answer per objection survives, and keep only the latest
+   competitive intel per competitor (drop older, superseded intel).
 3. Flag any unresolved contradictions to the operator with a short summary.
 4. Prune anything that is:
    - More than 90 days old AND not referenced in a recent session

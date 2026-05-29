@@ -1,8 +1,9 @@
 """
-Session 1 — Baseline.
+Session 1 — Baseline (Helios deal, first prep call).
 
 Starts a Managed Agents session with the memory store ATTACHED so the agent
-can read and write /mnt/memory/. Inlines the round1 docs in the user message.
+can read and write /mnt/memory/. Inlines the round1 docs (the prospect's stack
+overview, objection log, and current pitch deck) in the user message.
 
 After this session, inspect the memory store to see what the agent saved:
     python inspect_memory.py
@@ -17,12 +18,15 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
+try:
+    from dotenv import load_dotenv
 
-TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
-)
+    load_dotenv()  # pick up ANTHROPIC_API_KEY from a local .env if present
+except ImportError:
+    pass
+
+
+TEST_QUESTION = "Tomorrow's call is the final pitch. What's our strategy?"
 
 DOCS_DIR = Path("synthetic-data/round1")
 OUTPUT_DIR = Path("outputs")
@@ -73,7 +77,8 @@ def main() -> None:
     )
 
     user_message = (
-        "I'm including our onboarding and policy documents below. Please:\n"
+        "I'm including the prospect's stack overview, objection log, and current "
+        "pitch deck below. Please:\n"
         "1. First, check your memory store at /mnt/memory/ to see what you've "
         "learned in previous sessions.\n"
         "2. Then read the documents below.\n"
