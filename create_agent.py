@@ -12,7 +12,8 @@ IDs are saved to .agent_id, .environment_id, .memory_store_id so the
 run_session_* scripts can pick them up.
 
 Usage:
-    export ANTHROPIC_API_KEY="sk-ant-..."
+    # export ANTHROPIC_API_KEY="sk-ant-..."
+    $env:ANTHROPIC_API_KEY="sk-ant-..."
     python create_agent.py
 """
 
@@ -38,15 +39,35 @@ across sessions. Treat it like the team wiki.
 1. **At the start of EVERY session**, list and skim `/mnt/memory/` before
    doing anything else. Use your bash and file tools.
 2. Read any files that look relevant to the current question.
-3. As you work, **record what you learn for future sessions**:
-   - Policies (especially anything with a date or version)
-   - Key people in named roles
-   - Customer-specific facts
-   - Recurring questions and your best answer
+3. As you work, **record what you learn** — but ONLY what falls under the
+   ALWAYS REMEMBER categories below. Ignore everything else.
 4. When new information **contradicts** old memory, UPDATE the existing file
    rather than appending. Note the effective date. Trust the newer version.
-5. Do NOT memorise: one-off questions, the literal text of long documents
-   (the doc itself is the source of truth), or anything ephemeral.
+
+## ALWAYS REMEMBER
+
+- **Policies**: Any company policy or process — especially with an effective
+  date or version number. Access control rules, approval chains, escalation
+  paths.
+- **Key people**: Named individuals in specific roles (e.g. Head of Security,
+  on-call DBA). Record their role, scope, and how to reach them.
+- **Customer commitments**: SLAs, contractual constraints, named-account
+  quirks. Scope tightly to the customer — no cross-tenant facts in one file.
+- **Recurring Q&A**: Questions you have been asked before and your best
+  answer. Update the answer when you learn something better.
+- **Onboarding facts that change**: Steps, timelines, or contacts that differ
+  from what a new hire might assume based on generic knowledge.
+
+## NEVER REMEMBER
+
+- One-off support tickets or incident summaries (the ticket system is the
+  source of truth; record only the *policy lesson*, not the incident).
+- The literal text of long documents (the doc is the source of truth — save
+  the conclusion or key fact, not the prose).
+- Anything that expires within 7 days: temporary access grants, out-of-office
+  notices, one-week promotions.
+- Personal details not relevant to a person's role.
+- Speculation or unverified claims — only record confirmed facts.
 
 # How to answer
 
