@@ -1,26 +1,26 @@
 # Team Directory — January 2026
 
-## Engineering Leadership
+## Data Leadership
 
-- **Anika Reddy** — Head of Engineering. Joined 2023. Based London.
-- **Carlos Mendes** — Head of SRE. Joined 2024. Based Lisbon. Owns the on-call rotation.
-- **Yuki Tanaka** — Head of Platform. Joined 2022. Based Tokyo. Owns auth, signing, tenant-config services.
-- **Maya Singh** — Head of Security. Joined 2024. Based Bangalore.
-- **Tom Bryce** — Engineering Ops Lead. Joined 2021. Based London. The person who actually knows where the bodies are buried.
+- **Anika Reddy** — Head of Data & AI. Joined 2023. Based Luxembourg.
+- **Carlos Mendes** — Head of Data Engineering. Joined 2024. Based Berlin. Owns the data on-call rotation.
+- **Yuki Tanaka** — Data Platform Lead. Joined 2022. Based Warsaw. Owns exchange-api, catalog-service, access-broker.
+- **Maya Singh** — Head of DataSec. Joined 2024. Based Luxembourg.
+- **Tom Bryce** — Data Developer Experience Lead. Joined 2021. Based Berlin. The person who actually knows where the bodies are buried.
 
-## SRE Team
+## Data Platform Engineering (on-call) Team
 
-- **Liu Wei** — SRE. Joined 2023.
-- **Sarah Hofmann** — SRE. Joined 2024.
-- **Diego Sanchez** — SRE. Joined 2025. Currently on parental leave through July 2026.
-- **Rachel Wong** — SRE. Joined 2025.
+- **Liu Wei** — Data Platform Engineer. Joined 2023.
+- **Sarah Hofmann** — Data Platform Engineer. Joined 2024.
+- **Diego Sanchez** — Data Platform Engineer. Joined 2025. Currently on parental leave through July 2026.
+- **Rachel Wong** — Data Platform Engineer. Joined 2025.
 
-## Platform Team
+## Data Platform Team
 
 - **Yuki Tanaka** (lead)
-- **Idris Patel** — Senior. Joined 2023. Owns auth-service day-to-day.
+- **Idris Patel** — Senior. Joined 2023. Owns exchange-api day-to-day.
 - **Karim El Sayed** — Mid. Joined 2024.
 
 ## On-call rotation
 
-The SRE rotation is owned by Carlos Mendes. The current week's on-call SRE is responsible for ad-hoc access requests, P0/P1 escalations, and pairing with new hires for their prod-access pairing session.
+The Data Platform Engineer (DPE) rotation is owned by Carlos Mendes. The current week's on-call DPE is responsible for ad-hoc data-access requests, P0/P1 escalations (including data-quality and data-leak incidents), and pairing with new hires for their production data-access pairing session.

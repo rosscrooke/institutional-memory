@@ -1,24 +1,24 @@
-# Production Access Policy — UPDATED
+# Production Data Access Policy — UPDATED
 
 *Effective 2026-05-15. Supersedes the January 2026 version.*
-*Owned by Maya Singh (Head of Security) and Carlos Mendes (Head of SRE).*
+*Owned by Maya Singh (Head of DataSec) and Carlos Mendes (Head of Data Engineering).*
 
 ## What changed and why
 
-Following the April incident review (PROD-INC-04-2026), we are tightening production access. The new policy:
+Following the April incident review (PROD-INC-04-2026), we are tightening production data access. The new policy:
 
-- Eliminates the SRE pairing session as the access trigger (it was a bottleneck — backlog grew to 3 weeks).
+- Eliminates the DPE pairing session as the access trigger (it was a bottleneck — backlog grew to 3 weeks).
 - Replaces it with an **online certification** + **just-in-time access** model.
 - Centralises access requests in our IAM platform, not Slack.
 
 ## New process for read-only access
 
-1. Engineer completes the **Prod Access Foundations** course in the BTS Learning portal (90 minutes, self-paced).
+1. Engineer completes the **Production Data Access Foundations** course in the BTS Learning portal (90 minutes, self-paced).
 2. After passing the assessment, engineer requests access through the IAM platform (link in the learning portal completion email).
 3. Access is granted **just-in-time**, scoped to a 4-hour window per request. Engineers re-request as needed.
 4. Engineer's manager is notified of each request. No manager sign-off required for individual requests — only for the initial certification.
 
-**No SRE pairing session required.** No Slack ticket required.
+**No DPE pairing session required.** No Slack ticket required.
 
 ## Tenure requirement reduced
 
@@ -31,8 +31,8 @@ Engineers who already have read-only access under the old policy retain it throu
 ## What hasn't changed
 
 - Read-write and privileged access requirements are unchanged.
-- The on-call rotation continues to manage P0/P1 escalations.
+- The on-call rotation continues to manage P0/P1 escalations (including data-quality and data-leak incidents).
 
 ## Why the change matters
 
-The old policy was created when we had 40 engineers. We're now 280. The pairing-session model didn't scale. The new model is auditable, faster, and aligns with our SOC2 controls.
+The old policy was created when we had 40 engineers. We're now 280. The pairing-session model didn't scale. The new model is auditable, faster, and aligns with our DORA and ISO 27001 access controls.
