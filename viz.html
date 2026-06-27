@@ -103,7 +103,7 @@ function step(cls, text){
   const d=document.createElement('div'); d.className='step '+cls; d.textContent=text;
   $('stream').appendChild(d); $('stream').scrollTop=$('stream').scrollHeight;
 }
-let tick=null, t0=0, steps=0, typer=null, thinkShown=false, briefShown=false;
+let tick=null, t0=0, steps=0, typer=null, thinkShown=false, briefShown=false, replayCancel=false;
 let prevMem = JSON.parse(localStorage.getItem('holocron_prev_mem') || '{}'); // path -> content from last run
 
 function startPulse(){
@@ -122,6 +122,7 @@ function stopPulse(){ clearInterval(tick); tick=null; const p=$('pulse'); if(p) 
 
 function reset(){
   if(es){es.close();es=null;}
+  replayCancel=true;
   stopPulse(); clearInterval(typer); typer=null; thinkShown=false; briefShown=false;
   $('stream').innerHTML=''; $('answer').textContent=''; $('answer').className='answer';
   $('memory').innerHTML=''; $('prompt').textContent='';
@@ -129,45 +130,67 @@ function reset(){
   $('status').className='status'; setBusy(false);
 }
 
+// Render one frame. Shared by the live EventSource stream and the static
+// (GitHub Pages) replay so behaviour is identical in both modes.
+function handleFrame(f, sess){
+  if(f.type==='heartbeat') return;          // keep-alive only
+  if(f.type==='prompt'){ $('prompt').textContent = f.text; }
+  else if(f.type==='status'){ steps++; step('stat', f.text); }
+  else if(f.type==='think'){
+    // reasoning marker in the activity stream (thinking text is often empty
+    // in this SDK, so we don't pipe it into the brief panel any more)
+    steps++;
+    const tail = f.text ? ': '+f.text.slice(0,80) : '';
+    step('stat','🧠 reasoning…'+tail);
+  }
+  else if(f.type==='tool'){
+    steps++;
+    const where = f.target ? '  '+f.target.slice(0,80) : '';
+    step(f.memory?'mem':'tool', (f.memory?'📁 ':'⚙ ')+f.name+where);
+    if(f.body){ const c=document.createElement('div'); c.className='body';
+      c.textContent=f.body.slice(0,400); $('stream').lastChild.after(c);
+      $('stream').scrollTop=$('stream').scrollHeight; }
+  }
+  else if(f.type==='tool_result'){
+    // show what the tool returned, attached under the last step
+    if(f.text){ const c=document.createElement('div'); c.className='body';
+      c.textContent='↳ '+f.text.slice(0,400); $('stream').lastChild.after(c);
+      $('stream').scrollTop=$('stream').scrollHeight; }
+  }
+  else if(f.type==='answer'){ stopPulse(); appendBrief(f.text); }
+  else if(f.type==='memory'){ renderMemory(f.files, sess); }
+  else if(f.type==='error'){ stopPulse(); step('err','✖ '+f.text); finish('error'); }
+  else if(f.type==='done'){ finish('done'); }
+}
+
+// Static replay: fetch the committed capture and play it back client-side, so
+// replay works on GitHub Pages (no server). Paced like the server's /replay.
+async function replayStatic(sess){
+  let frames;
+  try{
+    const res = await fetch(`replays/viz_run_${sess}.json`, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    frames = await res.json();
+  }catch(e){ stopPulse(); step('err','✖ no saved replay for session '+sess); finish('error'); return; }
+  for(const f of frames){
+    if(replayCancel) return;
+    handleFrame(f, sess);
+    await new Promise(r=>setTimeout(r, f.type==='answer'?20:400));
+  }
+  // older captures may not end with a 'done' frame
+  if(!frames.some(f=>f.type==='done')) finish('replay');
+}
+
 function run(sess){
   reset();
   setBusy(true);
-  const mode = $('replay').checked ? 'replay' : 'run';
-  $('status').textContent = (mode==='replay'?'replaying':'running live') + ' — Session '+sess+'…';
+  const replayMode = $('replay').checked;
+  $('status').textContent = (replayMode?'replaying':'running live') + ' — Session '+sess+'…';
   $('status').className='status live';
   startPulse();
-  es = new EventSource(`/${mode}?session=${sess}`);
-  es.onmessage = ev => {
-    let f; try{ f = JSON.parse(ev.data); }catch(e){ return; }
-    if(f.type==='heartbeat') return;          // keep-alive only
-    if(f.type==='prompt'){ $('prompt').textContent = f.text; }
-    else if(f.type==='status'){ steps++; step('stat', f.text); }
-    else if(f.type==='think'){
-      // reasoning marker in the activity stream (thinking text is often empty
-      // in this SDK, so we don't pipe it into the brief panel any more)
-      steps++;
-      const tail = f.text ? ': '+f.text.slice(0,80) : '';
-      step('stat','🧠 reasoning…'+tail);
-    }
-    else if(f.type==='tool'){
-      steps++;
-      const where = f.target ? '  '+f.target.slice(0,80) : '';
-      step(f.memory?'mem':'tool', (f.memory?'📁 ':'⚙ ')+f.name+where);
-      if(f.body){ const c=document.createElement('div'); c.className='body';
-        c.textContent=f.body.slice(0,400); $('stream').lastChild.after(c);
-        $('stream').scrollTop=$('stream').scrollHeight; }
-    }
-    else if(f.type==='tool_result'){
-      // show what the tool returned, attached under the last step
-      if(f.text){ const c=document.createElement('div'); c.className='body';
-        c.textContent='↳ '+f.text.slice(0,400); $('stream').lastChild.after(c);
-        $('stream').scrollTop=$('stream').scrollHeight; }
-    }
-    else if(f.type==='answer'){ stopPulse(); appendBrief(f.text); }
-    else if(f.type==='memory'){ renderMemory(f.files, sess); }
-    else if(f.type==='error'){ stopPulse(); step('err','✖ '+f.text); finish('error'); }
-    else if(f.type==='done'){ finish('done'); }
-  };
+  if(replayMode){ replayCancel=false; replayStatic(sess); return; }
+  es = new EventSource(`/run?session=${sess}`);
+  es.onmessage = ev => { let f; try{ f = JSON.parse(ev.data); }catch(e){ return; } handleFrame(f, sess); };
   es.onerror = () => { stopPulse(); finish('stream closed'); };
 }
 
