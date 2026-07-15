@@ -1,2 +1,6 @@
-anthropic>=0.40.0
+# 0.116.0+ sends the agent-memory-2026-07-22 beta header automatically on
+# memory_stores calls (see inspect_memory.py) instead of the older
+# managed-agents-2026-04-01 default; raised the floor ahead of the
+# 2026-07-22 cutover so cached/offline installs don't fall behind.
+anthropic>=0.116.0
 python-dotenv>=1.0.0

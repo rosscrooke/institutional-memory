@@ -32,13 +32,16 @@ def main() -> None:
 
     print(f"Memory store: {store_id}\n" + "=" * 60)
 
+    # `order_by` is no longer honored by the memory-stores list endpoint
+    # (server returns a deterministic but unspecified order as of the
+    # agent-memory-2026-07-22 behavior). We sort client-side instead so the
+    # demo output stays stable and readable.
     page = client.beta.memory_stores.memories.list(
         store_id,
         path_prefix="/",
-        order_by="path",
     )
 
-    items = list(page.data)
+    items = sorted(page.data, key=lambda item: item.path)
     if not items:
         print("(memory store is empty — has run_session_1.py been run?)")
         return
