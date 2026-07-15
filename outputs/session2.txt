@@ -1,0 +1,78 @@
+=== SESSION 2 ===
+Question: Tomorrow's call is the final pitch. What's our strategy?
+
+--- ANSWER ---
+My memory is already fully reconciled with these documents — a previous session captured both the 2026-05-22 Sven objection and the 2026-05-25 competitive update in detail. No contradictions found; everything is consistent. Here is the complete strategy for the final pitch.
+
+---
+
+## Strategy for the 2026-06-02 Final Pitch — Northwind Bank
+
+### The situation in one sentence
+Since the last call, Helios shipped the one thing that was a deal-breaker (active-active GA), and StreamCorp moved on price. Those two facts define the entire pitch structure.
+
+---
+
+### Slide / conversation sequence
+
+**1. Open with active-active resilience (new slide — before pricing)**
+This is Sven Aaltonen's board mandate and his explicit walk-away condition. Lead with it. Key proof points for him:
+- GA as of 2026-05-25. Both regions take writes simultaneously.
+- Per-record vector-clock conflict resolution.
+- Sub-5s RPO under documented conditions. Frankfurt↔Dublin latency is ~12ms — **well inside the 80ms spec threshold**.
+- Automatic failover, tested at 1.2M events/sec under chaos conditions.
+- Covers all three of Northwind's regions (Frankfurt, Dublin, Virginia). Included in Enterprise — no extra line item.
+- StreamCorp's equivalent is **active-passive only**, with no announced timeline for active-active.
+
+Also offer: a named TAM and weekly check-ins for the first 90 days post-cutover (confirm delivery sign-off *before* the pitch — this is still an open internal action).
+
+**2. Acknowledge the StreamCorp price cut — proactively, not defensively**
+Klara will have seen the 2026-05-23 announcement ($1.10 → $0.88/GB effective June 1). Don't wait for her to raise it. Use it as the entry point to the TCO conversation:
+- StreamCorp's $0.88/GB **does not include active-active**. Building it on top of StreamCorp (self-managed + engineering time) wipes out their price advantage.
+- Helios active-active is **included in Enterprise tier**. The full TCO comparison shifts materially once you price in what StreamCorp would cost to match Helios's capability.
+- If Klara has her own incident-hour figures, offer to rerun the model with her actuals on the spot. (Current model uses our estimates — closing this gap would strengthen the case.)
+
+Helios leadership has endorsed holding list price. Discount only through the standard approval flow if it comes to that.
+
+**3. Residency pinning — close Marcus Lehmann's objection**
+Present residency pinning (GA 2026-05-25) alongside the existing signed attestation:
+- Per-record region tagging enforced **at the broker level**, not just at deployment.
+- A record tagged `eu` cannot be replicated, mirrored, or read from a non-EU broker — hardware enforcement, not policy.
+- Per-record residency events streamed to a customer-controlled audit topic.
+- This converts Marcus's objection from "open" to "closed." Frame it that way explicitly.
+
+**4. Migration & latency (Raghav Iyer)**
+- Migration runbook appendix (v0.4 — confirm delivery final review is done).
+- Bake-off cluster offer for Raghav's own latency validation (Helios p99 benchmark: 38ms vs. their 42ms current; contractual SLA: 60ms).
+- Topic-by-topic migration: low-risk → mid → payments last.
+
+---
+
+### What NOT to do
+- **Do not bring up the Salesforce CDC connector.** Northwind hasn't asked. If they do ask: Debezium today, first-party connector on the roadmap for 2026-Q4.
+- **Do not pitch** the analytics layer, AI/ML features, or multi-cloud beyond BYOC.
+- **Do not discount on the spot.** Hold list price; route any discount request through the standard approval flow.
+
+---
+
+### Stakeholder cheat sheet
+
+| Person | Their question | Your answer |
+|---|---|---|
+| **Sven Aaltonen** (CISO) | "Can you do active-active, sub-5s RPO?" | Yes — GA today, Frankfurt↔Dublin 12ms, tested at 1.2M events/sec, included in Enterprise. |
+| **Klara Voss** (buyer) | "StreamCorp is now 20% cheaper." | Their price doesn't include active-active. Full TCO including that capability favours Helios. |
+| **Marcus Lehmann** (security) | Residency concerns | Broker-level pinning + signed attestation = closed. |
+| **Raghav Iyer** (tech lead) | Latency + migration | Bake-off cluster available; runbook v0.4; topic-by-topic cutover. |
+
+---
+
+### Key open internal actions before pitching
+1. **Confirm delivery team can commit** to named TAM + 90-day weekly check-ins for Sven.
+2. **Confirm migration runbook v0.4** has had final delivery review.
+3. **Confirm bake-off cluster** is still available for Raghav.
+4. **Deck should be v3.2** — resilience slide inserted before the pricing slide.
+5. Today's dry-run (2026-05-29) is the last chance to stress-test the resilience demo with the SE.
+
+---
+
+The deal is winnable. The one hard blocker Sven named is now answered. The biggest remaining risk is the TCO conversation with Klara — go in having already done the math on StreamCorp's true cost at feature parity, not just their headline rate.
