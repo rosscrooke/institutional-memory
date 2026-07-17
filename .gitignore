@@ -1,1 +1,17 @@
+# Datasets — multi-GB, never check in (download via scripts/download_polyvore.sh)
+data/
+
+# Fashionpedia val split cache for scripts/build_closet_dataset.py
 .fashionpedia-cache/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / secrets
+.env
+
+# macOS
+.DS_Store

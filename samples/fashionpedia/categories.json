@@ -1,0 +1,324 @@
+[
+  {
+    "id": 0,
+    "name": "shirt, blouse",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "combo000000"
+  },
+  {
+    "id": 1,
+    "name": "top, t-shirt, sweatshirt",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "combo000001"
+  },
+  {
+    "id": 2,
+    "name": "sweater",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "obj000008_00"
+  },
+  {
+    "id": 3,
+    "name": "cardigan",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "obj000009_00"
+  },
+  {
+    "id": 4,
+    "name": "jacket",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "obj000010_00"
+  },
+  {
+    "id": 5,
+    "name": "vest",
+    "supercategory": "upperbody",
+    "level": 2,
+    "taxonomy_id": "obj000011_00"
+  },
+  {
+    "id": 6,
+    "name": "pants",
+    "supercategory": "lowerbody",
+    "level": 2,
+    "taxonomy_id": "obj000013_00"
+  },
+  {
+    "id": 7,
+    "name": "shorts",
+    "supercategory": "lowerbody",
+    "level": 2,
+    "taxonomy_id": "obj000014_00"
+  },
+  {
+    "id": 8,
+    "name": "skirt",
+    "supercategory": "lowerbody",
+    "level": 2,
+    "taxonomy_id": "obj000015_00"
+  },
+  {
+    "id": 9,
+    "name": "coat",
+    "supercategory": "wholebody",
+    "level": 2,
+    "taxonomy_id": "obj000017_00"
+  },
+  {
+    "id": 10,
+    "name": "dress",
+    "supercategory": "wholebody",
+    "level": 2,
+    "taxonomy_id": "obj000018_00"
+  },
+  {
+    "id": 11,
+    "name": "jumpsuit",
+    "supercategory": "wholebody",
+    "level": 2,
+    "taxonomy_id": "obj000019_00"
+  },
+  {
+    "id": 12,
+    "name": "cape",
+    "supercategory": "wholebody",
+    "level": 2,
+    "taxonomy_id": "obj000020_00"
+  },
+  {
+    "id": 13,
+    "name": "glasses",
+    "supercategory": "head",
+    "level": 2,
+    "taxonomy_id": "obj000023_00"
+  },
+  {
+    "id": 14,
+    "name": "hat",
+    "supercategory": "head",
+    "level": 2,
+    "taxonomy_id": "obj000025_00"
+  },
+  {
+    "id": 15,
+    "name": "headband, head covering, hair accessory",
+    "supercategory": "head",
+    "level": 2,
+    "taxonomy_id": "combo000002"
+  },
+  {
+    "id": 16,
+    "name": "tie",
+    "supercategory": "neck",
+    "level": 2,
+    "taxonomy_id": "obj000030_00"
+  },
+  {
+    "id": 17,
+    "name": "glove",
+    "supercategory": "arms and hands",
+    "level": 2,
+    "taxonomy_id": "obj000032_00"
+  },
+  {
+    "id": 18,
+    "name": "watch",
+    "supercategory": "arms and hands",
+    "level": 2,
+    "taxonomy_id": "obj000033_00"
+  },
+  {
+    "id": 19,
+    "name": "belt",
+    "supercategory": "waist",
+    "level": 2,
+    "taxonomy_id": "obj000035_00"
+  },
+  {
+    "id": 20,
+    "name": "leg warmer",
+    "supercategory": "legs and feet",
+    "level": 2,
+    "taxonomy_id": "obj000037_00"
+  },
+  {
+    "id": 21,
+    "name": "tights, stockings",
+    "supercategory": "legs and feet",
+    "level": 2,
+    "taxonomy_id": "combo000003"
+  },
+  {
+    "id": 22,
+    "name": "sock",
+    "supercategory": "legs and feet",
+    "level": 2,
+    "taxonomy_id": "obj000040_00"
+  },
+  {
+    "id": 23,
+    "name": "shoe",
+    "supercategory": "legs and feet",
+    "level": 2,
+    "taxonomy_id": "obj000041_00"
+  },
+  {
+    "id": 24,
+    "name": "bag, wallet",
+    "supercategory": "others",
+    "level": 2,
+    "taxonomy_id": "combo000004"
+  },
+  {
+    "id": 25,
+    "name": "scarf",
+    "supercategory": "others",
+    "level": 2,
+    "taxonomy_id": "obj000045_00"
+  },
+  {
+    "id": 26,
+    "name": "umbrella",
+    "supercategory": "others",
+    "level": 2,
+    "taxonomy_id": "obj000046_00"
+  },
+  {
+    "id": 27,
+    "name": "hood",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000049_00"
+  },
+  {
+    "id": 28,
+    "name": "collar",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000050_00"
+  },
+  {
+    "id": 29,
+    "name": "lapel",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000051_00"
+  },
+  {
+    "id": 30,
+    "name": "epaulette",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000052_00"
+  },
+  {
+    "id": 31,
+    "name": "sleeve",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000053_00"
+  },
+  {
+    "id": 32,
+    "name": "pocket",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000055_00"
+  },
+  {
+    "id": 33,
+    "name": "neckline",
+    "supercategory": "garment parts",
+    "level": 2,
+    "taxonomy_id": "obj000056_00"
+  },
+  {
+    "id": 34,
+    "name": "buckle",
+    "supercategory": "closures",
+    "level": 2,
+    "taxonomy_id": "obj000058_00"
+  },
+  {
+    "id": 35,
+    "name": "zipper",
+    "supercategory": "closures",
+    "level": 2,
+    "taxonomy_id": "obj000059_00"
+  },
+  {
+    "id": 36,
+    "name": "applique",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000061_00"
+  },
+  {
+    "id": 37,
+    "name": "bead",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000062_00"
+  },
+  {
+    "id": 38,
+    "name": "bow",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000063_00"
+  },
+  {
+    "id": 39,
+    "name": "flower",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000064_00"
+  },
+  {
+    "id": 40,
+    "name": "fringe",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000065_00"
+  },
+  {
+    "id": 41,
+    "name": "ribbon",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000066_00"
+  },
+  {
+    "id": 42,
+    "name": "rivet",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000067_00"
+  },
+  {
+    "id": 43,
+    "name": "ruffle",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000068_00"
+  },
+  {
+    "id": 44,
+    "name": "sequin",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000069_00"
+  },
+  {
+    "id": 45,
+    "name": "tassel",
+    "supercategory": "decorations",
+    "level": 2,
+    "taxonomy_id": "obj000070_00"
+  }
+]
