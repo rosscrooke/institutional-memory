@@ -1,0 +1,14 @@
+# Datasets — multi-GB, never check in (download via scripts/download_polyvore.sh)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / secrets
+.env
+
+# macOS
+.DS_Store
