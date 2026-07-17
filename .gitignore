@@ -10,5 +10,13 @@ venv/
 # Env / secrets
 .env
 
+# Managed Agents resource IDs (workspace-specific, written by create_agent.py)
+.agent_id
+.environment_id
+.memory_store_id
+
+# Session transcripts
+outputs/
+
 # macOS
 .DS_Store
