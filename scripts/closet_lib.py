@@ -77,8 +77,11 @@ def split_attributes(attribute_ids, attr_index):
         attr = attr_index.get(aid)
         if attr is None:
             continue
+        name = _clean(attr["name"])
+        if name.startswith("no "):  # negative markers like "no non-textile material"
+            continue
         target = materials if attr["supercategory"] in MATERIAL_SUPERCATS else attrs
-        target.append(_clean(attr["name"]))
+        target.append(name)
     return materials, attrs
 
 

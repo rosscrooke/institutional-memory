@@ -71,8 +71,10 @@ def test_split_attributes():
         2: {"name": "plain (pattern)", "supercategory": "textile pattern"},
         3: {"name": "washed", "supercategory": "textile finishing, manufacturing techniques"},
         4: {"name": "metal", "supercategory": "non-textile material type"},
+        5: {"name": "no non-textile material", "supercategory": "non-textile material type"},
+        6: {"name": "no waistline", "supercategory": "waistline"},
     }
-    materials, attrs = split_attributes([1, 2, 3, 4], attr_index)
+    materials, attrs = split_attributes([1, 2, 3, 4, 5, 6], attr_index)
     assert materials == ["suede", "metal"]
     assert attrs == ["plain", "washed"]
 
