@@ -50,8 +50,13 @@ run the pipeline):
 ```
 
 - `category`, `material`, `attributes` come straight from Fashionpedia. `material`
-  holds attribute names whose supercategory is fabric/textile-related; `attributes`
-  holds the rest (silhouette, style, finish).
+  holds attribute names from the `leather` and `non-textile material type`
+  supercategories — the only material-like supercategories in the ontology (there is
+  no denim/cotton/wool attribute in Fashionpedia); `attributes` holds the rest
+  (silhouette, length, neckline, pattern, finish). Negative markers ("no waistline",
+  "no non-textile material", …) are dropped. Accessory instances carry no attributes
+  at all in Fashionpedia, so accessories have empty `material`/`attributes` and are
+  named by bare category.
 - `condition` (new | good | worn | needs repair) and `quality_tier`
   (luxury | mid | budget) are synthesized with a seeded RNG (fixed seed, weighted
   toward a realistic closet mix) so output is reproducible.
@@ -66,9 +71,8 @@ shoe, glasses, hat, belt, watch, scarf/tie, headband).
 
 Filters:
 
-- Bounding box ≥ ~100×100px in the source photo (crops stay legible)
-- Prefer instances carrying ≥1 material attribute; fall back to attribute-less
-  instances only if a category bucket can't be filled
+- Bounding box ≥ 100×100px for tops/bottoms; ≥ 60×60px for accessories (accessory
+  boxes are small — watches/glasses almost never reach 100px)
 - At most 2 items per source photo (variety)
 - Crops get ~10% padding around the bbox, clamped to image bounds
 
