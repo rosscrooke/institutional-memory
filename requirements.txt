@@ -4,3 +4,5 @@
 # 2026-07-22 cutover so cached/offline installs don't fall behind.
 anthropic>=0.116.0
 python-dotenv>=1.0.0
+pillow
+pytest
