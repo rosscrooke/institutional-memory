@@ -3,7 +3,7 @@
 **One-liner:** 75-year-old retiree, "coastal grandma" — linen, natural colors, unfussy elegance.
 
 ## Bio
-- Age 75, retired librarian. Lives in a beach town; walks on the boardwalk most mornings.
+- Age 75, woman (she/her), retired librarian. Lives in a beach town; walks on the boardwalk most mornings.
 - Dresses for comfort and ease first, but cares about looking "put together, not fussy."
 - Shops a few times a year, keeps clothes for a long time, buys quality over quantity.
 

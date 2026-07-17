@@ -3,7 +3,7 @@
 **One-liner:** 34-year-old new parent — practical, washable, comfortable, still wants to feel like herself.
 
 ## Bio
-- Age 34, marketing manager on parental leave with a 4-month-old.
+- Age 34, woman (she/her), marketing manager on parental leave with a 4-month-old.
 - Wardrobe just changed overnight: whatever she wears has to survive spit-up and one-handed dressing.
 - Used to enjoy fashion; now wants "5 things that work and make me feel human."
 

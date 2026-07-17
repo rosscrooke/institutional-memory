@@ -3,7 +3,7 @@
 **One-liner:** 32-year-old corporate lawyer — "quiet luxury," a tight neutral capsule wardrobe.
 
 ## Bio
-- Age 32, litigation associate at a big firm. Long hours, high-stakes rooms.
+- Age 32, woman (she/her), litigation associate at a big firm. Long hours, high-stakes rooms.
 - Wants to look expensive and effortless without thinking about it — a uniform of good pieces.
 - Believes in a small, curated closet where everything matches everything.
 

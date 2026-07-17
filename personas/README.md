@@ -19,7 +19,9 @@ gets feedback from, and updates its knowledge with across sessions.
 
 The set spans age (15–75), fashion investment (Jeff's indifference → Rosa's joy),
 palette (all-black → maximalist color), and constraint type (durability, budget, comfort,
-nursing/practicality, plus-size fit, weatherproofing).
+nursing/practicality, plus-size fit, weatherproofing). Gender is stated explicitly on each
+profile: Carla, Priya, Meredith, and Rosa are women (she/her); Oscar and Dante are men
+(he/him); Jeff and Kenji are nonbinary (they/them).
 
 ## File format
 

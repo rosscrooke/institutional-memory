@@ -3,7 +3,7 @@
 **One-liner:** 15-year-old, loves bright colors and streetwear, partial to the Le Fleur brand.
 
 ## Bio
-- Age 15, high schooler. Style is identity — how he shows up matters a lot to him.
+- Age 15, boy (he/him), high schooler. Style is identity — how he shows up matters a lot to him.
 - Deep in sneaker/streetwear culture; follows drops, hype, and what his friends rate.
 - Budget is limited (allowance + occasional gifts), so pieces are chosen carefully and worn proudly.
 

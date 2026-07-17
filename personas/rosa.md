@@ -3,7 +3,7 @@
 **One-liner:** 48-year-old, plus-size, unapologetically bold — big prints, saturated color, statement everything.
 
 ## Bio
-- Age 48, salon owner. Sees clothes as joy and self-expression, not concealment.
+- Age 48, woman (she/her), salon owner. Sees clothes as joy and self-expression, not concealment.
 - Body-positive; rejects the "rules" she was told about dressing a plus-size body.
 - Loves getting dressed — it's the best part of her morning.
 

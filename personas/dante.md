@@ -3,7 +3,7 @@
 **One-liner:** 28-year-old alt/goth — head-to-toe black, DIY, band tees, heavy boots.
 
 ## Bio
-- Age 28, works at a record store, plays in a band on weekends.
+- Age 28, man (he/him), works at a record store, plays in a band on weekends.
 - Style is subcultural identity, built over years. Thrifts and customizes most of it.
 - Not chasing trends — chasing a *look* that's been consistent since he was 16.
 
