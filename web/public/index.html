@@ -63,6 +63,13 @@
     align-items: baseline;
   }
   li:last-child { border-bottom: 1px solid var(--line); }
+  li a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color .15s;
+  }
+  li a:hover { border-bottom-color: var(--fg); }
   .tag {
     font-size: 0.75rem;
     color: var(--muted);
@@ -91,10 +98,11 @@
 
   <h2>Your first week</h2>
   <ul>
-    <li><span>Meet your chapter leads</span><span class="tag">Day 1&ndash;2</span></li>
-    <li><span>Say hi in your chapter Slack</span><span class="tag">Day 1&ndash;2</span></li>
-    <li><span>Read the core curriculum</span><span class="tag">Week 1</span></li>
-    <li><span>Meet your chaptermates</span><span class="tag">Week 1</span></li>
+    <li><span><a href="people.html">Meet your chapter leads</a></span><span class="tag">Day 1&ndash;2</span></li>
+    <li><span><a href="chapter.html">Know your chapter</a></span><span class="tag">Day 1&ndash;2</span></li>
+    <li><span><a href="docs.html">Read the core curriculum</a></span><span class="tag">Week 1</span></li>
+    <li><span><a href="people.html">Meet your chaptermates</a></span><span class="tag">Week 1</span></li>
+    <li><span><a href="whoisthis.html">Who is this?</a></span><span class="tag">Anytime</span></li>
   </ul>
 
   <footer>
