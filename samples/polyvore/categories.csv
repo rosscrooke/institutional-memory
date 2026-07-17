@@ -1,0 +1,224 @@
+2,undefined,
+3,dress,all-body
+4,dress,all-body
+5,dress,all-body
+6,gown,all-body
+7,skirt,bottoms
+8,skirt,bottoms
+9,skirt,bottoms
+9,skirt,bottoms
+9,skirt,bottoms
+10,long skirt,bottoms
+11,sweater,tops
+11,sleeveless top,tops
+11,shirt,tops
+11,sleeveless top,tops
+11,top,tops
+15,tunic,tops
+17,blouse,tops
+17,sleeveless top,tops
+17,sweater,tops
+17,long-sleeve shirt,tops
+17,blouse,tops
+18,cardigan,outerwear
+19,sweater,tops
+19,turtleneck sweater,tops
+19,turtleneck sweater,tops
+21,male T-shirt,tops
+21,tshirt,tops
+23,jacket/coat,outerwear
+24,trench coat,outerwear
+24,coat,outerwear
+24,coat,outerwear
+24,trench coat,outerwear
+25,blazer,outerwear
+25,jacket,outerwear
+25,parka,outerwear
+26,vest,tops
+27,jeans,bottoms
+27,jeans,bottoms
+28,pants,bottoms
+28,pant,bottoms
+28,pant,bottoms
+29,shorts,bottoms
+29,shorts,bottoms
+29,shorts,bottoms
+30,set/suit,all-body
+31,swimsuit bottom,bottoms
+35,backpack,bags
+36,tote,bags
+36,purse,bags
+36,tote,bags
+37,purse,bags
+37,purse,bags
+37,handbag,bags
+37,bag,bags
+38,clutch,bags
+38,clutch,bags
+38,clutch,bags
+39,purse,bags
+40,purse,bags
+41,flat sandals,shoes
+41,closed shoes,shoes
+41,heels,shoes
+42,boots,shoes
+42,boots,shoes
+43,pump,shoes
+43,heels,shoes
+46,heels,shoes
+46,sandals,shoes
+46,sandals,shoes
+46,heels,shoes
+46,sandals,shoes
+47,flats,shoes
+47,flats,shoes
+48,flip-flops,shoes
+49,sneakers,shoes
+49,sneakers,shoes
+49,flats,shoes
+50,slippers,shoes
+51,gloves,accessories 
+51,scarf,scarves
+52,belt,accessories 
+53,gloves,accessories
+55,straw hat,hats
+55,baseball cap,hats
+55,beanie,hats
+55,hat,hats
+55,winter hat,hats
+56,tie,accessories
+57,sunglasses,accessories 
+57,sunglasses,sunglasses
+58,headband,accessories
+59,umbrella,accessories
+61,watch,accessories 
+61,watch,jewellery
+62,necklace,jewellery
+62,necklace,jewellery 
+62,necklace,jewellery 
+64,earrings,jewellery
+64,earrings,jewellery 
+64,earrings,jewellery 
+65,ring,jewellery
+65,ring,jewellery 
+68,stockings,accessories
+69,socks,accessories
+104,tank,tops
+104,sleeveless top,tops
+104,tank,tops
+105,scarf,scarves
+106,bracelet,jewellery
+106,bracelet,jewellery 
+106,bracelet,jewellery 
+107,pendant,jewellery
+231,pouch,accessories
+236,blazer,outerwear
+236,blazer,outerwear
+237,jeans,bottoms
+237,jeans,bottoms
+238,jeans,bottoms
+239,jeans,bottoms
+240,jeans,bottoms
+241,pants,bottoms
+243,jumpsuit,all-body
+244,romper,all-body
+245,lingerie top,
+246,lingerie bottom,
+247,lingerie top,
+248,pyjama/slip/chemise,all-body
+249,pyjama pants,bottoms
+250,kimono,tops
+251,hosiery,accessories
+252,sports long-sleeve shirt,tops
+253,sweatpants,bottoms
+254,tennis skirt,bottoms
+255,shorts,bottoms
+256,track jacket,tops
+257,sports bra,tops
+258,purse,bags
+259,backpack,bags
+259,basket bag,bags
+259,backpack,bags
+260,satchel,bags
+261,heels,shoes
+261,booties,shoes
+262,flat boots,shoes
+263,heeled boots,shoes
+264,over-the-knee boots,shoes
+265,flats,shoes
+266,closed shoes,shoes
+267,platform shoes,shoes
+268,sneakers,shoes
+269,suspenders,accessories
+270,activity wristband,accessories
+272,male shirt,tops
+273,male sweater,tops
+275,male T-shirt,tops
+277,male suit jacket,outerwear
+278,male jeans,bottoms
+279,male suit pants,bottoms
+280,male knee-length shorts,bottoms
+281,male suit,all-body
+282,male swim shorts,bottoms
+283,male boxers,
+284,male sweatpants,bottoms
+285,male sports shirt/track suit,
+286,male sports shirt,tops
+287,male track pants,bottoms
+288,male sports shorts,bottoms
+289,male track jacket,tops
+290,messenger bag,bags
+291,male shoes,shoes
+292,male shoes,shoes
+293,male flip-flops,shoes
+294,male flip-flops,shoes
+295,male loafers,shoes
+296,male formal shoes,shoes
+297,male sneakers,shoes
+298,male sneakers,shoes
+299,male accessories,accessories
+300,male belt,accessories
+301,male gloves,accessories
+302,male scarves,accessories
+303,male baseball caps,hats
+304,male sunglasses,sunglasses
+305,male watch,jewellery
+306,male suspenders,accessories
+307,cufflings,jewellery
+309,tank top,tops
+310,jeans,bottoms
+315,bodie,tops
+318,purse,bags
+318,handbag,bags
+318,purse,bags
+332,pants,bottoms
+341,male shirt,tops
+342,male polos,tops
+343,tank top,tops
+1605,swimsuit,all-body
+1606,one-piece swimsuit,all-body
+1607,coverup,outerwear
+4452,jeans,bottoms
+4454,male shirt,tops
+4455,male formal jacket,outerwear
+4456,male jacket,outerwear
+4457,male vest,outerwear
+4458,male pants,bottoms
+4459,male pants,bottoms
+4460,male socks,accessories
+4461,travel bag,bags
+4462,laptop bag,bags
+4463,wallet,accessories
+4464,male shoes,shoes
+4465,male slippers,shoes
+4466,brooch,jewellery
+4467,key chain,accessories
+4468,money clip,accessories
+4470,bowtie,accessories
+4472,smartphone cases/tech items,accessories
+4473,umbrella,accessories
+4495,sweathirt,tops
+4495,sweater,tops
+4496,hoodie,tops
+4517,swimsuit top,tops
+4518,swimsuit bottom,bottoms
