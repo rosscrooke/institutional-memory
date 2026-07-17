@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Know Your Chapter</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e2dd;
+    --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 46rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; }
+  .mark { font-size: 2rem; font-weight: 500; letter-spacing: -0.03em; margin-bottom: 2rem; }
+  nav { margin-bottom: 3.5rem; font-size: 0.8125rem; }
+  nav a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
+  nav a:hover { color: var(--fg); }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15; letter-spacing: -0.03em; font-weight: 500; margin: 0 0 1rem;
+  }
+  .sub { color: var(--muted); font-size: 1.125rem; max-width: 34rem; margin: 0 0 3rem; }
+  h2 {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); font-weight: 600; margin: 0 0 1rem;
+  }
+  ul { list-style: none; padding: 0; margin: 0 0 3rem; }
+  li {
+    border-top: 1px solid var(--line); padding: 1rem 0;
+    display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
+  }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  .tag { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+  .note {
+    border: 1px dashed var(--line); padding: 0.875rem 1rem; border-radius: 4px;
+    font-size: 0.8125rem; color: var(--muted); margin: 0 0 3rem;
+  }
+  .card { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.25rem 0; margin-bottom: 1rem; }
+  .q { font-size: 1.0625rem; margin: 0.25rem 0 0.75rem; }
+  button {
+    font: inherit; font-size: 0.875rem; background: var(--fg); color: var(--bg);
+    border: 0; border-radius: 999px; padding: 0.5rem 1.125rem; cursor: pointer;
+  }
+  button.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+  .row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 3rem; }
+  .mem { border-top: 1px solid var(--line); padding: 0.75rem 0; font-size: 0.9375rem; }
+  .mem .lane { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .retired { color: var(--muted); text-decoration: line-through; }
+  .new::after { content: " new"; font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  footer { border-top: 1px solid var(--line); padding-top: 1.5rem; color: var(--muted); font-size: 0.8125rem; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --fg:#f5f4f2; --muted:#9a9895; --line:#2e2d2b; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">[</div>
+  <nav><a href="index.html">&larr; Welcome</a></nav>
+
+  <h1>Know your chapter.</h1>
+  <p class="sub">
+    A quiz that reads off current state. Each chaptermate has a memory file the
+    curator keeps up to date &mdash; when something changes, the question changes.
+  </p>
+
+  <p class="note">
+    <strong>Mocked seam.</strong> In the real build, a Managed Agent with the Memory
+    tool holds one memory file per person (scoped by user ID), and a memory-curator
+    sub-agent reads new Slack activity (#furballs, #sf_office, #shoutouts) plus the
+    Notion projects DB and decides what is quiz-worthy vs. noise. This page has no
+    server and no agent: the memory below is hardcoded, and &ldquo;Simulate new Slack
+    activity&rdquo; replays one scripted update client-side to show the demo diff.
+  </p>
+
+  <h2>Your chapters</h2>
+  <ul>
+    <li><span>&#128013; Chapter 1 &mdash; Joshua Marker (Eng Lead / fCTO, SF) &middot; Eva Morgenstein (FDPM Lead, SF)</span><span class="tag">#chapter_1</span></li>
+    <li><span>&#129409; Chapter 2 &mdash; Ben Greenberg (Eng Lead / fCTO, SF) &middot; Alexandra Spencer-Wong (FDPM Lead, SF)</span><span class="tag">#chapter_2</span></li>
+  </ul>
+
+  <h2>Quiz &mdash; generated from memory</h2>
+  <div class="card">
+    <div class="tag" id="qstate">Session 1 &middot; initial ingest</div>
+    <p class="q" id="q"></p>
+    <div class="tag" id="src"></div>
+  </div>
+  <div class="row">
+    <button id="sim">Simulate new Slack activity</button>
+    <button class="ghost" id="reset">Reset to session 1</button>
+  </div>
+
+  <h2>Memory file &mdash; chaptermate A (Chapter 1)</h2>
+  <div id="mem"></div>
+
+  <p class="note" style="margin-top:2rem">
+    The curator runs two lanes with different volatility. <strong>Fast / fun</strong>
+    (#furballs, #sf_office) overwrites freely. <strong>Slower / higher-signal</strong>
+    (projects DB, #shoutouts, skills directory) only adds data points &mdash; a shoutout
+    never replaces someone&rsquo;s core skill tags.
+  </p>
+
+  <footer>
+    Provisional branding, derived from ode.com &mdash; not the official kit.
+    Chaptermate memory shown is illustrative placeholder data.
+  </footer>
+</main>
+<script>
+  var sessions = [
+    {
+      state: "Session 1 · initial ingest",
+      q: "Guess who — this person has one cat and works on healthcare AI.",
+      src: "Sources: Meet the Team bio, #furballs history, skills directory.",
+      mem: [
+        { lane: "fast / fun", text: "Has one cat.", cls: "" },
+        { lane: "slower / higher-signal", text: "Skills: healthcare AI, backend.", cls: "" },
+        { lane: "slower / higher-signal", text: "Current project: Acuity.", cls: "" }
+      ]
+    },
+    {
+      state: "Session 2+ · reconciled after new activity",
+      q: "Guess who — this person just became a two-cat household (foster fail) and got shouted out for catching a data quality issue before a client review.",
+      src: "Curator: #furballs post contradicts “one cat” → fact retired, not appended. #shoutouts adds a data point, skill tags unchanged.",
+      mem: [
+        { lane: "fast / fun", text: "Has one cat.", cls: "retired" },
+        { lane: "fast / fun", text: "Has two cats — foster fail sibling.", cls: "new" },
+        { lane: "slower / higher-signal", text: "Skills: healthcare AI, backend.", cls: "" },
+        { lane: "slower / higher-signal", text: "Current project: Acuity.", cls: "" },
+        { lane: "slower / higher-signal", text: "Shoutout: caught a data quality issue pre-client-review.", cls: "new" }
+      ]
+    }
+  ];
+
+  var i = 0;
+
+  function render() {
+    var s = sessions[i];
+    document.getElementById("qstate").textContent = s.state;
+    document.getElementById("q").textContent = s.q;
+    document.getElementById("src").textContent = s.src;
+    var rows = s.mem.map(function (m) {
+      return '<div class="mem"><div class="lane">' + m.lane + '</div>' +
+             '<div class="' + m.cls + '">' + m.text + '</div></div>';
+    });
+    document.getElementById("mem").innerHTML = rows.join("");
+    document.getElementById("sim").disabled = i === sessions.length - 1;
+  }
+
+  document.getElementById("sim").addEventListener("click", function () {
+    if (i < sessions.length - 1) { i++; render(); }
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    i = 0; render();
+  });
+
+  render();
+</script>
+</body>
+</html>
