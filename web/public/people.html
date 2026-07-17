@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who to meet &mdash; Ode</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e2dd;
+    --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+  }
+  .mark {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin-bottom: 3.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    margin: 0 0 1rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 1.125rem;
+    max-width: 34rem;
+    margin: 0 0 2.5rem;
+  }
+  h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .lede { color: var(--muted); font-size: 0.9375rem; margin: 0 0 1.25rem; max-width: 34rem; }
+  ul { list-style: none; padding: 0; margin: 0 0 3rem; }
+  li {
+    border-top: 1px solid var(--line);
+    padding: 1.25rem 0;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  .avatar {
+    width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem;
+    border: 1px solid var(--line); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: var(--muted); font-weight: 600;
+  }
+  .who { flex: 1 1 auto; min-width: 0; }
+  .name { font-weight: 500; }
+  .role, .bio, .loc { font-size: 0.8125rem; color: var(--muted); }
+  .role { text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; font-size: 0.6875rem; }
+  .aside { flex: 0 0 auto; text-align: right; }
+  .slot { font-size: 0.8125rem; }
+  a { color: var(--fg); }
+  .btn {
+    display: inline-block; margin-top: 0.375rem;
+    border: 1px solid var(--fg); border-radius: 999px;
+    padding: 0.25rem 0.75rem; font-size: 0.75rem;
+    text-decoration: none; white-space: nowrap;
+  }
+  .switcher { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 0.875rem 0; margin-bottom: 2.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  .switcher label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+  select { font: inherit; font-size: 0.8125rem; background: transparent; color: var(--fg); border: 1px solid var(--line); border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+  .tabs { display: flex; gap: 1.25rem; border-bottom: 1px solid var(--line); margin-bottom: 2rem; }
+  .tab { background: none; border: 0; border-bottom: 2px solid transparent; font: inherit; font-size: 0.875rem; color: var(--muted); padding: 0 0 0.625rem; cursor: pointer; }
+  .tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--fg); font-weight: 500; }
+  .tab .yours { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .nudge { border: 1px solid var(--line); border-radius: 0.375rem; padding: 1rem 1.125rem; font-size: 0.875rem; color: var(--muted); margin: 0 0 2.5rem; }
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --fg:#f5f4f2; --muted:#9a9895; --line:#2e2d2b; }
+  }
+  @media (max-width: 30rem) {
+    li { flex-wrap: wrap; }
+    .aside { text-align: left; flex-basis: 100%; padding-left: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">[</div>
+
+  <h1>Who to meet.</h1>
+  <p class="sub">
+    Week one in San Francisco. Two chapter leads worth booking, and a room full of
+    people who&rsquo;d just like to say hi.
+  </p>
+
+  <div class="switcher">
+    <label for="whoami">Signed in as</label>
+    <select id="whoami"></select>
+    <span class="role" style="color:var(--muted)">no auth yet &mdash; simulated identity</span>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div id="panel"></div>
+
+  <footer>
+    Provisional branding, derived from ode.com &mdash; not the official kit.
+  </footer>
+</main>
+
+<script>
+/* ---------------------------------------------------------------------------
+   Hardcoded snapshot of the verified live data (PIVOT-PLAN.md §4).
+   Stands in for GET /api/people until the Notion sync is extended.
+   --------------------------------------------------------------------------- */
+
+// Chapters. slackChannel is stored EXACTLY as the Notion Chapters DB has it,
+// drift included: Chapter 1's row reads `chapter-1` while the canonical
+// `Chapters at Fractional` page says `#chapter_1`. The DB row is the one that's
+// wrong — normalize on read here, and fix the row upstream.
+const CHAPTERS = [
+  { id: 'ch1', emoji: '\u{1F40D}', name: 'Chapter 1', slackChannel: 'chapter-1' },
+  { id: 'ch2', emoji: '\u{1F981}', name: 'Chapter 2', slackChannel: '#chapter_2' }
+];
+
+// Two leads per chapter, never three: Engineering Lead (fCTO) + FDPM Lead.
+// "fCTO" here means the chapter's Engineering Lead — not the project-level fCTO
+// and not the rotating career role.
+const LEADS = [
+  { name: 'Joshua Marker', chapter: 'ch1', leadRole: 'eng',
+    homeOffice: 'SF', neighborhood: 'Hayes Valley',
+    bio: 'Engineering Lead for Chapter 1. Start here for anything technical.',
+    officeHours: { slot: 'Thu 2:00–3:00pm PT', link: '#book/joshua-marker' } },
+  { name: 'Eva Morgenstein', chapter: 'ch1', leadRole: 'fdpm',
+    homeOffice: 'SF', neighborhood: 'Mission',
+    bio: 'FDPM Lead for Chapter 1. Knows where every project actually stands.',
+    officeHours: { slot: 'Wed 10:00–11:00am PT', link: '#book/eva-morgenstein' } },
+  { name: 'Ben Greenberg', chapter: 'ch2', leadRole: 'eng',
+    homeOffice: 'SF', neighborhood: 'Noe Valley',
+    bio: 'Engineering Lead for Chapter 2. Start here for anything technical.',
+    officeHours: { slot: 'Tue 4:00–5:00pm PT', link: '#book/ben-greenberg' } },
+  { name: 'Alexandra Spencer-Wong', chapter: 'ch2', leadRole: 'fdpm',
+    homeOffice: 'SF', neighborhood: 'Potrero Hill',
+    bio: 'FDPM Lead for Chapter 2. Knows where every project actually stands.',
+    officeHours: { slot: 'Mon 1:00–2:00pm PT', link: '#book/alexandra-spencer-wong' } }
+];
+
+// Tier 2 — chaptermates. No scheduling, ever.
+const PEOPLE = [
+  { name: 'Porter Westling', chapter: 'ch2', team: 'Engineering',
+    homeOffice: 'Remote', neighborhood: 'Bayview',
+    bio: 'Engineering. Ships the unglamorous parts nobody else wants to own.' },
+  { name: 'Dani Okonkwo', chapter: 'ch2', team: 'Engineering',
+    homeOffice: 'SF', neighborhood: 'Bernal Heights',
+    bio: 'Engineering. The person to ask when a build breaks at 6pm.' },
+  { name: 'Marisol Vega', chapter: 'ch2', team: 'FDPM',
+    homeOffice: 'SF', neighborhood: 'Inner Sunset',
+    bio: 'FDPM. Translates client chaos into a plan you can read.' },
+  { name: 'Theo Lindqvist', chapter: 'ch1', team: 'Engineering',
+    homeOffice: 'SF', neighborhood: 'Dogpatch',
+    bio: 'Engineering. Deep in eval harnesses; happy to walk you through one.' },
+  { name: 'Priya Raman', chapter: 'ch1', team: 'Engineering',
+    homeOffice: 'Remote', neighborhood: 'Oakland' ,
+    bio: 'Engineering. Across the bridge, in the office most Wednesdays.' },
+  { name: 'Colin Ashby', chapter: 'ch1', team: 'FDPM',
+    homeOffice: 'SF', neighborhood: 'North Beach',
+    bio: 'FDPM. Runs the standup you will actually look forward to.' }
+];
+
+// Simulated identities, including someone with no chapter (~37 of 89 people).
+const IDENTITIES = [
+  { label: 'New hire in Chapter 1', chapter: 'ch1' },
+  { label: 'New hire in Chapter 2', chapter: 'ch2' },
+  { label: 'New hire with no chapter set', chapter: null }
+];
+
+/* --- helpers ------------------------------------------------------------- */
+
+// Slack channel names drift between sources (`chapter-1` vs `#chapter_2`).
+// Canonical form is `#chapter_1`: leading '#', underscores, lowercase.
+function normalizeSlackChannel(raw) {
+  if (!raw) return null;
+  const trimmed = String(raw).trim().replace(/^#+/, '');
+  const canonical = trimmed.toLowerCase().replace(/-/g, '_');
+  return canonical ? '#' + canonical : null;
+}
+
+function slackHref(channel) {
+  return 'slack://channel?team=T000000&id=' + encodeURIComponent(channel.replace(/^#/, ''));
+}
+
+// Home Office is a payroll/desk attribute, not an availability signal.
+// Never filter on it — render both facts and let the human judge.
+// Porter: Home Office=Remote, Neighborhood=Bayview -> "Remote, based in Bayview".
+function locationLine(person) {
+  const office = person.homeOffice || 'Unlisted';
+  if (person.neighborhood && office !== person.neighborhood) {
+    return office + ', based in ' + person.neighborhood;
+  }
+  return office;
+}
+
+// Leads surface regardless of location. Today all four are SF, so this branch is
+// latent — but a remote lead must still appear, framed for video.
+function leadAccessLine(lead) {
+  return lead.homeOffice === 'SF'
+    ? locationLine(lead)
+    : 'remote — book a video call';
+}
+
+function chapterById(id) { return CHAPTERS.find(c => c.id === id) || null; }
+function initials(name) {
+  return name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(p => p[0]).join('');
+}
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+/* --- rendering ----------------------------------------------------------- */
+
+function leadItem(lead) {
+  const ch = chapterById(lead.chapter);
+  const li = el('li');
+  li.append(el('div', 'avatar', initials(lead.name)));
+
+  const who = el('div', 'who');
+  who.append(el('div', 'role', lead.leadRole === 'eng' ? 'Engineering Lead (fCTO) · ' + ch.name
+                                                       : 'FDPM Lead · ' + ch.name));
+  who.append(el('div', 'name', lead.name));
+  who.append(el('div', 'bio', lead.bio));
+  who.append(el('div', 'loc', leadAccessLine(lead)));
+  li.append(who);
+
+  const aside = el('div', 'aside');
+  aside.append(el('div', 'slot', lead.officeHours.slot));
+  const btn = el('a', 'btn', 'Take this slot');
+  btn.href = lead.officeHours.link;
+  aside.append(btn);
+  li.append(aside);
+  return li;
+}
+
+function peerItem(person) {
+  const ch = chapterById(person.chapter);
+  const channel = normalizeSlackChannel(ch && ch.slackChannel);
+  const li = el('li');
+  li.append(el('div', 'avatar', initials(person.name)));
+
+  const who = el('div', 'who');
+  who.append(el('div', 'role', person.team));
+  who.append(el('div', 'name', person.name));
+  who.append(el('div', 'bio', person.bio));
+  who.append(el('div', 'loc', locationLine(person)));
+  li.append(who);
+
+  if (channel) {
+    const aside = el('div', 'aside');
+    const link = el('a', 'btn', channel);
+    link.href = slackHref(channel);
+    aside.append(link);
+    li.append(aside);
+  }
+  return li;
+}
+
+function section(title, lede, items) {
+  const frag = document.createDocumentFragment();
+  frag.append(el('h2', null, title));
+  frag.append(el('p', 'lede', lede));
+  const ul = document.createElement('ul');
+  items.forEach(n => ul.append(n));
+  frag.append(ul);
+  return frag;
+}
+
+let state = { identityChapter: 'ch1', activeTab: 'ch1' };
+
+function renderPanel() {
+  const panel = document.getElementById('panel');
+  panel.textContent = '';
+
+  // No-chapter state: show every chapter's leads, nudge toward the advisor.
+  // Don't guess a chapter, don't crash.
+  if (state.activeTab === 'all') {
+    const nudge = el('div', 'nudge');
+    nudge.append(document.createTextNode(
+      'We don’t have a chapter on file for you yet, so here are the leads of every ' +
+      'chapter. Ask your advisor which chapter you’re in — once it’s set, ' +
+      'this page narrows to your people.'));
+    panel.append(nudge);
+    panel.append(section(
+      'Must-meet · all chapters',
+      'These are the windows this week where each chapter’s leads are actually reachable. Take one.',
+      LEADS.map(leadItem)));
+    return;
+  }
+
+  const ch = chapterById(state.activeTab);
+  const channel = normalizeSlackChannel(ch.slackChannel);
+  const leads = LEADS.filter(l => l.chapter === ch.id);
+  const peers = PEOPLE.filter(p => p.chapter === ch.id);
+  const mine = state.identityChapter === ch.id;
+
+  panel.append(section(
+    'Must-meet · ' + ch.name,
+    mine ? 'Genuinely hard to reach. Here is the one window this week where each of them is actually reachable — take it.'
+         : 'Chapter ' + ch.name.replace('Chapter ', '') + '’s two leads and their office hours this week.',
+    leads.map(leadItem)));
+
+  const peerLede = mine
+    ? 'These are your people. No booking, no ceremony — go say hi in ' + channel + '.'
+    : 'Peers in this chapter. Say hi in ' + channel + ' if your work overlaps.';
+  panel.append(section('Chaptermates · ' + ch.name, peerLede,
+    peers.length ? peers.map(peerItem) : [el('li', null, 'No chaptermates listed yet.')]));
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  tabs.textContent = '';
+
+  const entries = state.identityChapter === null
+    ? [{ id: 'all', label: 'All chapters', mine: true }].concat(
+        CHAPTERS.map(c => ({ id: c.id, label: c.emoji + ' ' + c.name, mine: false })))
+    // Your own chapter is the default tab and leads the list; others are browsable.
+    : CHAPTERS.slice()
+        .sort((a, b) => (b.id === state.identityChapter) - (a.id === state.identityChapter))
+        .map(c => ({ id: c.id, label: c.emoji + ' ' + c.name, mine: c.id === state.identityChapter }));
+
+  entries.forEach(e => {
+    const btn = el('button', 'tab');
+    btn.type = 'button';
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', String(e.id === state.activeTab));
+    btn.append(document.createTextNode(e.label));
+    if (e.mine) btn.append(el('span', 'yours', '  · yours'));
+    btn.addEventListener('click', () => { state.activeTab = e.id; render(); });
+    tabs.append(btn);
+  });
+}
+
+function render() { renderTabs(); renderPanel(); }
+
+const select = document.getElementById('whoami');
+IDENTITIES.forEach((id, i) => {
+  const opt = document.createElement('option');
+  opt.value = String(i);
+  opt.textContent = id.label;
+  select.append(opt);
+});
+select.addEventListener('change', () => {
+  const id = IDENTITIES[Number(select.value)];
+  state.identityChapter = id.chapter;
+  state.activeTab = id.chapter === null ? 'all' : id.chapter;
+  render();
+});
+render();
+</script>
+</body>
+</html>

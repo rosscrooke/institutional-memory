@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orientation docs &mdash; Ode</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e2dd;
+    --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+  }
+  .mark {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin-bottom: 3.5rem;
+  }
+  a { color: inherit; }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    margin: 0 0 1rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 1.125rem;
+    max-width: 34rem;
+    margin: 0 0 3.5rem;
+  }
+  h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.25rem;
+  }
+  ul.list { list-style: none; padding: 0; margin: 0 0 3rem; }
+  ul.list > li {
+    border-top: 1px solid var(--line);
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  ul.list > li:last-child { border-bottom: 1px solid var(--line); }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .tag.stale { color: var(--fg); font-weight: 600; }
+  .row-main { display: flex; flex-direction: column; gap: 0.125rem; }
+  .row-title {
+    background: none; border: 0; padding: 0; margin: 0;
+    font: inherit; color: inherit; text-align: left;
+    cursor: pointer; text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+  }
+  .row-title:hover { text-decoration-color: var(--fg); }
+  .meta { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125em;
+  }
+  button.act {
+    font: inherit;
+    font-size: 0.8125rem;
+    background: none;
+    color: var(--fg);
+    border: 1px solid var(--line);
+    border-radius: 0.25rem;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+  }
+  button.act:hover { border-color: var(--muted); }
+  button.act.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  button.act:disabled { opacity: 0.4; cursor: default; }
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    margin: 0 0 3rem;
+  }
+  .note {
+    border-left: 2px solid var(--line);
+    padding-left: 1rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin: 0 0 3rem;
+  }
+  .note strong { color: var(--fg); font-weight: 600; }
+  .body-text { white-space: pre-wrap; margin: 0 0 2rem; }
+  fieldset { border: 0; padding: 0; margin: 0 0 2rem; }
+  legend { font-weight: 500; margin-bottom: 0.5rem; padding: 0; }
+  label.opt {
+    display: block;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  label.opt input { margin-right: 0.6rem; }
+  label.opt:has(input:checked) { color: var(--fg); }
+  .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+  .delta { border: 1px solid var(--line); border-radius: 0.375rem; padding: 1rem 1.25rem; margin: 0 0 2rem; }
+  .delta ul { margin: 0.5rem 0 0; padding-left: 1.1rem; font-size: 0.875rem; }
+  .hide { display: none; }
+  input[type=text] {
+    font: inherit; font-size: 0.875rem;
+    background: var(--bg); color: var(--fg);
+    border: 1px solid var(--line); border-radius: 0.25rem;
+    padding: 0.3rem 0.5rem;
+  }
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --fg:#f5f4f2; --muted:#9a9895; --line:#2e2d2b; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">[</div>
+
+  <h1>Orientation docs.</h1>
+  <p class="sub">
+    Read a doc, answer two or three questions. When the doc changes, we tell you
+    what changed and ask again.
+  </p>
+
+  <div id="banner"></div>
+
+  <section id="list-view">
+    <h2>Who you are</h2>
+    <p class="actions" style="margin:0 0 3rem">
+      <input type="text" id="who" placeholder="your name" autocomplete="off">
+      <span class="meta" id="who-note"></span>
+    </p>
+
+    <h2 id="src-label">Docs</h2>
+    <ul class="list" id="docs"></ul>
+
+    <h2>Your receipts</h2>
+    <ul class="list" id="receipts"></ul>
+
+    <div class="note">
+      <p><strong>We do not detect reading.</strong> Nobody can. A checkbox is a
+      self&#8209;report and we treat it as one. The quiz is a <em>proxy</em> &mdash;
+      it&rsquo;s evidence that something landed, not proof that you read every word.
+      A receipt records that you could answer these questions against
+      <em>this version</em> of this doc, at this time. That&rsquo;s all it claims.</p>
+      <p><strong>Retake anything, any time, for any reason.</strong> No streaks, no
+      score history, nothing reported to your lead. This is a welcome mat, not an exam.</p>
+    </div>
+
+    <h2>Admin (demo)</h2>
+    <div class="panel">
+      <p class="meta" style="margin:0 0 1rem">
+        Simulate someone pushing an edit to a doc. Its version hash changes, and
+        every receipt written against the old hash goes stale.
+      </p>
+      <div class="actions" id="admin"></div>
+      <p class="actions" style="margin:1.25rem 0 0">
+        <button class="act" id="reset">Clear all receipts</button>
+      </p>
+    </div>
+  </section>
+
+  <section id="doc-view" class="hide">
+    <p style="margin:0 0 2rem"><button class="act" id="back">&larr; All docs</button></p>
+    <h2 id="d-kicker">Doc</h2>
+    <h3 id="d-title" style="font-size:1.75rem;letter-spacing:-0.03em;margin:0 0 0.5rem"></h3>
+    <p class="meta" id="d-meta" style="margin:0 0 2rem"></p>
+    <div id="d-delta"></div>
+    <div class="body-text" id="d-body"></div>
+    <h2>Two or three questions</h2>
+    <form id="quiz"></form>
+    <div class="actions">
+      <button class="act primary" id="submit">Submit</button>
+      <span class="meta" id="q-result"></span>
+    </div>
+  </section>
+
+  <footer>
+    Provisional branding, derived from ode.com &mdash; not the official kit.
+    Receipts live in this browser&rsquo;s localStorage only.
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var LS_RECEIPTS = 'ode.receipts.v1';
+  var LS_BUMPS = 'ode.bumps.v1';
+  var LS_WHO = 'ode.who.v1';
+
+  // ---- placeholder fallback -------------------------------------------------
+  var PLACEHOLDER = {
+    placeholder: true,
+    docs: [
+      {
+        id: 'ph-expenses',
+        title: 'Expenses and reimbursement',
+        version: 'ph1a2b3c',
+        updated: '2026-06-02',
+        body: 'PLACEHOLDER CONTENT — not a real Ode doc.\n\n' +
+          'Spend under $75 needs no pre-approval; file it within 30 days with a receipt photo. ' +
+          'Anything above $75 needs a written yes from your chapter lead before you spend, not after.\n\n' +
+          'Travel is booked through the shared travel tool so the company holds the ticket, ' +
+          'not you. If you book it yourself you carry the cancellation risk.\n\n' +
+          'Reimbursements land in the payroll run that follows approval — not immediately.',
+        key_facts: [
+          'Pre-approval threshold is $75.',
+          'Filing window is 30 days.',
+          'Travel goes through the shared tool.'
+        ],
+        quiz: [
+          {
+            q: 'You want to buy a $120 monitor stand. What has to happen first?',
+            options: [
+              'Buy it, then file the receipt within 30 days.',
+              'Get a written yes from your chapter lead before you spend.',
+              'Nothing — hardware is exempt.'
+            ],
+            answer: 1
+          },
+          {
+            q: 'You booked a flight on your personal card because the tool was slow. What is the real consequence?',
+            options: [
+              'None, it reimburses the same way.',
+              'You personally carry the cancellation risk.',
+              'The trip is automatically cancelled.'
+            ],
+            answer: 1
+          },
+          {
+            q: 'A teammate says "just file it whenever." Why is that wrong?',
+            options: [
+              'There is a 30-day filing window.',
+              'Receipts are optional anyway.',
+              'Filing is done by finance, not you.'
+            ],
+            answer: 0
+          }
+        ]
+      },
+      {
+        id: 'ph-oncall',
+        title: 'On-call, in plain terms',
+        version: 'ph9f8e7d',
+        updated: '2026-05-18',
+        body: 'PLACEHOLDER CONTENT — not a real Ode doc.\n\n' +
+          'On-call means you are the first human a page reaches. It does not mean you fix everything ' +
+          'yourself. Your job is to acknowledge, assess, and escalate if it is not yours.\n\n' +
+          'Acknowledge within 5 minutes. If you cannot, the page rolls to secondary — that is ' +
+          'the system working, not you failing.\n\n' +
+          'Anything customer-visible gets a written note in the incident channel, even if the fix took ' +
+          'one minute. The note is for the next person, not for your record.',
+        key_facts: [
+          'Ack within 5 minutes or it rolls to secondary.',
+          'Escalating is expected, not a failure.',
+          'Customer-visible issues always get a written note.'
+        ],
+        quiz: [
+          {
+            q: 'A page arrives about a subsystem you have never touched. What is expected of you?',
+            options: [
+              'Debug it yourself before telling anyone.',
+              'Acknowledge, assess, and escalate — escalation is expected.',
+              'Ignore it; it will roll to secondary.'
+            ],
+            answer: 1
+          },
+          {
+            q: 'You miss an ack and the page rolls to secondary. How should you read that?',
+            options: [
+              'The system worked as designed.',
+              'A reportable failure on your part.',
+              'The page was invalid.'
+            ],
+            answer: 0
+          },
+          {
+            q: 'A customer-visible bug took you 60 seconds to fix. Do you write it up?',
+            options: [
+              'No — too small to matter.',
+              'Yes — the note is for the next person.',
+              'Only if a customer complained.'
+            ],
+            answer: 1
+          }
+        ]
+      }
+    ]
+  };
+
+  // ---- state ---------------------------------------------------------------
+  var DATA = null;
+  var bumps = read(LS_BUMPS, {});
+  var receipts = read(LS_RECEIPTS, []);
+  var who = '';
+  try { who = localStorage.getItem(LS_WHO) || ''; } catch (e) {}
+  var currentId = null;
+
+  function read(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      var val = JSON.parse(raw);
+      return val == null ? fallback : val;
+    } catch (e) { return fallback; }
+  }
+  function write(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  // A doc's live version = seed version, unless admin has bumped it.
+  function liveVersion(doc) {
+    var b = bumps[doc.id];
+    return b ? b.version : doc.version;
+  }
+  function liveDelta(doc) {
+    var b = bumps[doc.id];
+    if (b && b.delta) return b.delta;
+    return doc.delta || null;
+  }
+  function docById(id) {
+    for (var i = 0; i < DATA.docs.length; i++) {
+      if (DATA.docs[i].id === id) return DATA.docs[i];
+    }
+    return null;
+  }
+  function receiptFor(id) {
+    var found = null;
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      if (r.doc_id === id && r.user === (who || 'anonymous')) found = r;
+    }
+    return found;
+  }
+  function shortHash(v) { return String(v || '').slice(0, 7); }
+
+  function newHash() {
+    var chars = 'abcdef0123456789';
+    var out = '';
+    for (var i = 0; i < 7; i++) out += chars[Math.floor(Math.random() * chars.length)];
+    return out;
+  }
+
+  // ---- normalize whatever the seed file gives us ---------------------------
+  function normalize(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var list = Array.isArray(raw) ? raw : (raw.docs || raw.documents || raw.pages);
+    if (!Array.isArray(list) || !list.length) return null;
+
+    var out = [];
+    for (var i = 0; i < list.length; i++) {
+      var d = list[i];
+      if (!d || typeof d !== 'object') continue;
+      var body = d.body || d.content || d.text || '';
+      var quiz = Array.isArray(d.quiz) ? d.quiz : (Array.isArray(d.questions) ? d.questions : []);
+      var clean = [];
+      for (var j = 0; j < quiz.length; j++) {
+        var q = quiz[j];
+        if (!q || !q.q && !q.question) continue;
+        var opts = q.options || q.choices;
+        if (!Array.isArray(opts) || opts.length < 2) continue;
+        var ans = typeof q.answer === 'number' ? q.answer : q.answer_index;
+        if (typeof ans !== 'number' || ans < 0 || ans >= opts.length) continue;
+        clean.push({ q: q.q || q.question, options: opts, answer: ans });
+      }
+      // A doc with no body or no usable quiz can't drive the loop.
+      if (!String(body).trim() || clean.length < 2) continue;
+      out.push({
+        id: String(d.id || d.doc_id || ('seed-' + i)),
+        title: d.title || d.name || 'Untitled doc',
+        version: String(d.version || d.version_hash || newHash()),
+        updated: d.updated || d.updated_at || d.last_edited || '',
+        body: String(body),
+        key_facts: Array.isArray(d.key_facts) ? d.key_facts : [],
+        delta: d.delta || d.supersession || d.supersession_delta || null,
+        quiz: clean.slice(0, 3)
+      });
+    }
+    if (!out.length) return null;
+    return { placeholder: false, docs: out };
+  }
+
+  function normalizeDelta(delta) {
+    if (!delta) return null;
+    if (typeof delta === 'string') return { summary: delta, changes: [] };
+    var changes = delta.changes || delta.items || delta.points || [];
+    return {
+      summary: delta.summary || delta.what_changed || 'This doc changed.',
+      changes: Array.isArray(changes) ? changes : []
+    };
+  }
+
+  // ---- render: list --------------------------------------------------------
+  function render() {
+    document.getElementById('who').value = who;
+    document.getElementById('who-note').textContent = who
+      ? 'Receipts are written as "' + who + '".'
+      : 'Receipts are written as "anonymous" until you enter a name.';
+
+    document.getElementById('src-label').textContent = DATA.placeholder
+      ? 'Docs — placeholder set (seed content not loaded)'
+      : 'Docs';
+
+    var staleCount = 0;
+    var ul = document.getElementById('docs');
+    ul.innerHTML = '';
+    DATA.docs.forEach(function (doc) {
+      var v = liveVersion(doc);
+      var r = receiptFor(doc.id);
+      var stale = !!(r && r.doc_version !== v);
+      if (stale) staleCount++;
+
+      var status, cls = 'tag';
+      if (stale) { status = 'Stale — doc changed'; cls = 'tag stale'; }
+      else if (r) { status = 'Receipt ✓ ' + r.score; }
+      else { status = 'Not started'; }
+
+      var li = document.createElement('li');
+      li.innerHTML =
+        '<span class="row-main">' +
+          '<button class="row-title" data-open="' + esc(doc.id) + '">' + esc(doc.title) + '</button>' +
+          '<span class="meta">version <code>' + esc(shortHash(v)) + '</code>' +
+            (doc.updated ? ' · updated ' + esc(doc.updated) : '') + '</span>' +
+        '</span>' +
+        '<span class="' + cls + '">' + esc(status) + '</span>';
+      ul.appendChild(li);
+    });
+
+    // banner
+    var banner = document.getElementById('banner');
+    if (staleCount) {
+      banner.innerHTML =
+        '<div class="panel" style="border-color:var(--fg)">' +
+        '<h2 style="color:var(--fg)">Something you read has changed</h2>' +
+        '<p style="margin:0">' + staleCount + ' of your receipt' + (staleCount > 1 ? 's are' : ' is') +
+        ' against an older version of a doc. Open the doc — we’ll name what changed ' +
+        'before asking you anything.</p></div>';
+    } else {
+      banner.innerHTML = '';
+    }
+
+    // receipts
+    var rl = document.getElementById('receipts');
+    rl.innerHTML = '';
+    var mine = receipts.filter(function (r) { return r.user === (who || 'anonymous'); });
+    if (!mine.length) {
+      rl.innerHTML = '<li><span class="meta">No receipts yet.</span></li>';
+    } else {
+      mine.slice().reverse().forEach(function (r) {
+        var doc = docById(r.doc_id);
+        var v = doc ? liveVersion(doc) : r.doc_version;
+        var stale = r.doc_version !== v;
+        var li = document.createElement('li');
+        li.innerHTML =
+          '<span class="row-main">' +
+            '<span>' + esc(doc ? doc.title : r.doc_id) + '</span>' +
+            '<span class="meta">' + esc(r.user) + ' · ' + esc(r.score) +
+            ' · <code>' + esc(shortHash(r.doc_version)) + '</code> · ' +
+            esc(new Date(r.timestamp).toLocaleString()) + '</span>' +
+          '</span>' +
+          '<span class="' + (stale ? 'tag stale' : 'tag') + '">' +
+          (stale ? 'stale' : 'current') + '</span>';
+        rl.appendChild(li);
+      });
+    }
+
+    // admin
+    var admin = document.getElementById('admin');
+    admin.innerHTML = '';
+    DATA.docs.forEach(function (doc) {
+      var b = document.createElement('button');
+      b.className = 'act';
+      b.setAttribute('data-bump', doc.id);
+      b.textContent = 'Simulate push → ' + doc.title;
+      admin.appendChild(b);
+    });
+  }
+
+  // ---- render: doc + quiz -------------------------------------------------
+  function openDoc(id) {
+    currentId = id;
+    var doc = docById(id);
+    if (!doc) return;
+    var v = liveVersion(doc);
+    var r = receiptFor(id);
+    var stale = !!(r && r.doc_version !== v);
+
+    document.getElementById('d-kicker').textContent = DATA.placeholder
+      ? 'Placeholder doc' : 'Orientation doc';
+    document.getElementById('d-title').textContent = doc.title;
+    document.getElementById('d-meta').innerHTML =
+      'version <code>' + esc(shortHash(v)) + '</code>' +
+      (doc.updated ? ' · updated ' + esc(doc.updated) : '') +
+      (r ? ' · your receipt: <code>' + esc(shortHash(r.doc_version)) + '</code> ' +
+        (stale ? '(stale)' : '(current)') : ' · no receipt yet');
+
+    var dd = document.getElementById('d-delta');
+    var delta = normalizeDelta(liveDelta(doc));
+    if (stale && delta) {
+      var items = delta.changes.map(function (c) {
+        return '<li>' + esc(typeof c === 'string' ? c : (c.text || JSON.stringify(c))) + '</li>';
+      }).join('');
+      dd.innerHTML =
+        '<div class="delta" style="border-color:var(--fg)">' +
+        '<h2 style="color:var(--fg)">What changed since you read it</h2>' +
+        '<p style="margin:0">' + esc(delta.summary) + '</p>' +
+        (items ? '<ul>' + items + '</ul>' : '') +
+        '</div>';
+    } else if (stale) {
+      dd.innerHTML =
+        '<div class="delta" style="border-color:var(--fg)">' +
+        '<h2 style="color:var(--fg)">What changed since you read it</h2>' +
+        '<p style="margin:0">This doc was edited after your receipt, and no one recorded ' +
+        'a summary of the edit. We won’t invent one. Version <code>' +
+        esc(shortHash(r.doc_version)) + '</code> → <code>' + esc(shortHash(v)) +
+        '</code> — re-read and re-answer.</p></div>';
+    } else {
+      dd.innerHTML = '';
+    }
+
+    document.getElementById('d-body').textContent = doc.body;
+
+    var form = document.getElementById('quiz');
+    form.innerHTML = doc.quiz.map(function (q, qi) {
+      var opts = q.options.map(function (o, oi) {
+        return '<label class="opt"><input type="radio" name="q' + qi + '" value="' + oi + '">' +
+          esc(o) + '</label>';
+      }).join('');
+      return '<fieldset><legend>' + (qi + 1) + '. ' + esc(q.q) + '</legend>' + opts + '</fieldset>';
+    }).join('');
+
+    document.getElementById('q-result').textContent = r
+      ? (stale ? 'You passed this on an older version. Retake it.' : 'Already passed — retake freely.')
+      : '';
+    document.getElementById('list-view').classList.add('hide');
+    document.getElementById('doc-view').classList.remove('hide');
+    window.scrollTo(0, 0);
+  }
+
+  function submitQuiz() {
+    var doc = docById(currentId);
+    if (!doc) return;
+    var out = document.getElementById('q-result');
+    var correct = 0, answered = 0;
+    doc.quiz.forEach(function (q, qi) {
+      var sel = document.querySelector('input[name="q' + qi + '"]:checked');
+      if (!sel) return;
+      answered++;
+      if (Number(sel.value) === q.answer) correct++;
+    });
+    if (answered < doc.quiz.length) {
+      out.textContent = 'Answer all ' + doc.quiz.length + ' first — no penalty either way.';
+      return;
+    }
+    var total = doc.quiz.length;
+    var passed = correct === total;
+    if (!passed) {
+      out.textContent = correct + '/' + total + '. Not quite — the doc is right there. ' +
+        'Try again; nothing is recorded.';
+      return;
+    }
+    var v = liveVersion(doc);
+    // one receipt per (user, doc) — a retake supersedes
+    receipts = receipts.filter(function (r) {
+      return !(r.doc_id === doc.id && r.user === (who || 'anonymous'));
+    });
+    receipts.push({
+      user: who || 'anonymous',
+      doc_id: doc.id,
+      doc_version: v,
+      score: correct + '/' + total,
+      timestamp: new Date().toISOString()
+    });
+    write(LS_RECEIPTS, receipts);
+    out.textContent = correct + '/' + total + ' — receipt written against version ' +
+      shortHash(v) + '.';
+    render();
+  }
+
+  // ---- events -------------------------------------------------------------
+  document.getElementById('docs').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-open]');
+    if (t) openDoc(t.getAttribute('data-open'));
+  });
+  document.getElementById('admin').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-bump]');
+    if (!t) return;
+    var doc = docById(t.getAttribute('data-bump'));
+    if (!doc) return;
+    var prev = liveVersion(doc);
+    bumps[doc.id] = {
+      version: newHash(),
+      delta: liveDelta(doc) || {
+        summary: 'Someone edited this doc (simulated push from ' + shortHash(prev) + ').',
+        changes: ['Content changed. In the real system this list comes from the ' +
+                  'supersession delta captured at edit time.']
+      }
+    };
+    write(LS_BUMPS, bumps);
+    render();
+  });
+  document.getElementById('back').addEventListener('click', function () {
+    document.getElementById('doc-view').classList.add('hide');
+    document.getElementById('list-view').classList.remove('hide');
+    render();
+  });
+  document.getElementById('submit').addEventListener('click', function (e) {
+    e.preventDefault();
+    submitQuiz();
+  });
+  document.getElementById('quiz').addEventListener('submit', function (e) { e.preventDefault(); });
+  document.getElementById('who').addEventListener('input', function (e) {
+    who = e.target.value.trim();
+    try { localStorage.setItem(LS_WHO, who); } catch (err) {}
+    render();
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    receipts = [];
+    bumps = {};
+    write(LS_RECEIPTS, receipts);
+    write(LS_BUMPS, bumps);
+    render();
+  });
+
+  // ---- boot ---------------------------------------------------------------
+  function boot(data) {
+    DATA = data;
+    render();
+  }
+
+  fetch('seed-content.json', { cache: 'no-store' })
+    .then(function (res) {
+      if (!res.ok) throw new Error('http ' + res.status);
+      return res.json();
+    })
+    .then(function (raw) {
+      var norm = normalize(raw);
+      boot(norm || PLACEHOLDER);
+    })
+    .catch(function () {
+      boot(PLACEHOLDER);
+    });
+})();
+</script>
+</body>
+</html>

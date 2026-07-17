@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to Ode</title>
+<style>
+  :root {
+    --bg: #faf9f7;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #e5e2dd;
+    --accent: #1a1a1a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+  }
+  .mark {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    margin-bottom: 3.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    margin: 0 0 1rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 1.125rem;
+    max-width: 34rem;
+    margin: 0 0 3.5rem;
+  }
+  h2 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+  ul { list-style: none; padding: 0; margin: 0 0 3rem; }
+  li {
+    border-top: 1px solid var(--line);
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  li:last-child { border-bottom: 1px solid var(--line); }
+  .tag {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#141413; --fg:#f5f4f2; --muted:#9a9895; --line:#2e2d2b; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">[</div>
+
+  <h1>Welcome to Ode.</h1>
+  <p class="sub">
+    Your first week, one page at a time. We&rsquo;ll show you who to meet and what
+    to read &mdash; and when something changes, we&rsquo;ll tell you.
+  </p>
+
+  <h2>Your first week</h2>
+  <ul>
+    <li><span>Meet your chapter leads</span><span class="tag">Day 1&ndash;2</span></li>
+    <li><span>Say hi in your chapter Slack</span><span class="tag">Day 1&ndash;2</span></li>
+    <li><span>Read the core curriculum</span><span class="tag">Week 1</span></li>
+    <li><span>Meet your chaptermates</span><span class="tag">Week 1</span></li>
+  </ul>
+
+  <footer>
+    Provisional branding, derived from ode.com &mdash; not the official kit.
+  </footer>
+</main>
+</body>
+</html>
