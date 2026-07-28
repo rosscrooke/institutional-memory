@@ -116,7 +116,16 @@ def main() -> None:
                     print(f"\n  [memory: {name}  {target}]", flush=True)
                 else:
                     print(f"\n  [{name}]", flush=True)
+            elif event.type == "session.status_terminated":
+                print("\n\n[session terminated]")
+                break
             elif event.type == "session.status_idle":
+                # Sessions go idle transiently (e.g. waiting on a tool
+                # confirmation). Only a non-"requires_action" stop reason means
+                # the agent is actually done with the turn.
+                stop_reason = getattr(event, "stop_reason", None)
+                if getattr(stop_reason, "type", None) == "requires_action":
+                    continue
                 print("\n\n[agent finished]")
                 break
 

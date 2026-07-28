@@ -47,7 +47,7 @@ def main() -> None:
         return
 
     for item in items:
-        # `item.type` is "memory" for files (or "directory" for nested dirs)
+        # `item.type` is "memory" for files, "memory_prefix" for nested dirs
         if item.type != "memory":
             print(f"\n[dir] {item.path}")
             continue
