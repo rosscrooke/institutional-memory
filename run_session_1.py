@@ -19,9 +19,8 @@ from anthropic import Anthropic
 
 
 TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
+    "Give me my workout for tomorrow morning. 30 minutes, at home. Be specific "
+    "about exercises, sets, and reps."
 )
 
 DOCS_DIR = Path("synthetic-data/round1")
@@ -73,7 +72,7 @@ def main() -> None:
     )
 
     user_message = (
-        "I'm including our onboarding and policy documents below. Please:\n"
+        "I'm including my client file below. Please:\n"
         "1. First, check your memory store at /mnt/memory/ to see what you've "
         "learned in previous sessions.\n"
         "2. Then read the documents below.\n"

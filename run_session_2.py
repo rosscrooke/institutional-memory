@@ -20,9 +20,8 @@ from anthropic import Anthropic
 
 # Match session 1
 TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
+    "Give me my workout for tomorrow morning. 30 minutes, at home. Be specific "
+    "about exercises, sets, and reps."
 )
 
 DOCS_DIR = Path("synthetic-data/round2")
