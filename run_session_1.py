@@ -2,7 +2,9 @@
 Session 1 — Baseline.
 
 Starts a Managed Agents session with the memory store ATTACHED so the agent
-can read and write /mnt/memory/. Inlines the round1 docs in the user message.
+can read and write it (mounted somewhere under /mnt/memory/ — the agent lists
+that directory to find the exact path). Inlines the round1 docs in the user
+message.
 
 After this session, inspect the memory store to see what the agent saved:
     python inspect_memory.py
@@ -16,6 +18,9 @@ import os
 from pathlib import Path
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 TEST_QUESTION = (
@@ -64,21 +69,24 @@ def main() -> None:
                 "memory_store_id": memory_store_id,
                 "access": "read_write",
                 "instructions": (
-                    "This is your persistent institutional memory. Mounted at "
-                    "/mnt/memory/. Check it before starting. Record what you "
-                    "learn for future sessions."
+                    "This is your persistent institutional memory, mounted "
+                    "somewhere under /mnt/memory/ — list that directory to "
+                    "find the exact path. Check it before starting. Record "
+                    "what you learn for future sessions."
                 ),
             }
         ],
     )
+    Path(".session1_id").write_text(session.id)
 
     user_message = (
         "I'm including our onboarding and policy documents below. Please:\n"
-        "1. First, check your memory store at /mnt/memory/ to see what you've "
-        "learned in previous sessions.\n"
+        "1. First, list /mnt/memory/ to find your memory store, then check "
+        "it to see what you've learned in previous sessions.\n"
         "2. Then read the documents below.\n"
         "3. Then answer the question.\n"
-        "4. Before you finish, save anything worth remembering to /mnt/memory/.\n\n"
+        "4. Before you finish, save anything worth remembering to your "
+        "memory store.\n\n"
         f"{context}\n\n"
         "==================================================\n"
         f"QUESTION: {TEST_QUESTION}"
@@ -112,7 +120,14 @@ def main() -> None:
                 else:
                     print(f"\n  [{name}]", flush=True)
             elif event.type == "session.status_idle":
+                if event.stop_reason.type == "requires_action":
+                    # Transient idle — e.g. awaiting a tool confirmation.
+                    # Keep reading; this is not the end of the turn.
+                    continue
                 print("\n\n[agent finished]")
+                break
+            elif event.type == "session.status_terminated":
+                print("\n\n[session terminated]")
                 break
 
     final_text = "".join(final_text_parts)
