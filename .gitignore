@@ -3,6 +3,8 @@
 .environment_id
 .memory_store_id
 .curator_agent_id
+.clients.json
+.clients.json.tmp
 
 # Session transcripts
 outputs/
