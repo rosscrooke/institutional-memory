@@ -3,7 +3,8 @@ Session 2 — After memory + new context.
 
 Same agent, same memory store, fresh session. Round2 docs contradict round1.
 The agent should:
-- Read memory first (`/mnt/memory/`)
+- Read memory first (mounted somewhere under `/mnt/memory/` — list that
+  directory to find the exact path)
 - Notice the contradictions in the new docs
 - UPDATE memory rather than appending
 - Lead its answer with what changed and why
@@ -16,6 +17,9 @@ import os
 from pathlib import Path
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Match session 1
@@ -65,20 +69,23 @@ def main() -> None:
                 "memory_store_id": memory_store_id,
                 "access": "read_write",
                 "instructions": (
-                    "This is your persistent institutional memory. Some entries "
-                    "may be out of date — reconcile against the new documents in "
-                    "this session and UPDATE existing entries (don't just append)."
+                    "This is your persistent institutional memory, mounted "
+                    "somewhere under /mnt/memory/ — list that directory to "
+                    "find the exact path. Some entries may be out of date — "
+                    "reconcile against the new documents in this session and "
+                    "UPDATE existing entries (don't just append)."
                 ),
             }
         ],
     )
+    Path(".session2_id").write_text(session.id)
 
     user_message = (
         "I'm including some updated and new documents below. Some of them "
         "contradict things you learned in our previous session.\n\n"
         "Please:\n"
-        "1. First, check your memory store at /mnt/memory/ to see what you "
-        "already know.\n"
+        "1. First, list /mnt/memory/ to find your memory store, then check "
+        "it to see what you already know.\n"
         "2. Read the new documents below.\n"
         "3. Reconcile conflicts — UPDATE memory entries to reflect the "
         "newer information. Note dates.\n"
@@ -117,7 +124,14 @@ def main() -> None:
                 else:
                     print(f"\n  [{name}]", flush=True)
             elif event.type == "session.status_idle":
+                if event.stop_reason.type == "requires_action":
+                    # Transient idle — e.g. awaiting a tool confirmation.
+                    # Keep reading; this is not the end of the turn.
+                    continue
                 print("\n\n[agent finished]")
+                break
+            elif event.type == "session.status_terminated":
+                print("\n\n[session terminated]")
                 break
 
     final_text = "".join(final_text_parts)

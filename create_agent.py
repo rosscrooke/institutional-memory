@@ -4,22 +4,29 @@ Provision the three things this track needs:
   2. A cloud Environment (the container the agent runs in)
   3. A Memory Store that survives across sessions
 
-The memory store mounts at /mnt/memory/ inside the session container. The agent
+The memory store mounts under /mnt/memory/ inside the session container (the
+exact subpath is server-assigned — list /mnt/memory/ to find it). The agent
 reads and writes it with normal file tools. It persists across sessions —
 that's the whole point of this track.
 
 IDs are saved to .agent_id, .environment_id, .memory_store_id so the
-run_session_* scripts can pick them up.
+run_session_* scripts can pick them up. Re-running this script reuses any
+IDs already on disk instead of provisioning new resources — pass --force to
+provision fresh ones regardless.
 
 Usage:
     export ANTHROPIC_API_KEY="sk-ant-..."
-    python create_agent.py
+    python create_agent.py [--force]
 """
 
 import os
+import sys
 from pathlib import Path
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 SYSTEM_PROMPT = """\
@@ -32,11 +39,12 @@ expected to get sharper over time.
 
 # Memory protocol (mandatory)
 
-You have a persistent memory store mounted at `/mnt/memory/`. It survives
-across sessions. Treat it like the team wiki.
+You have a persistent memory store mounted somewhere under `/mnt/memory/`. It
+survives across sessions. Treat it like the team wiki.
 
-1. **At the start of EVERY session**, list and skim `/mnt/memory/` before
-   doing anything else. Use your bash and file tools.
+1. **At the start of EVERY session**, list `/mnt/memory/` to find your memory
+   store's mount point, then skim its contents before doing anything else.
+   Use your bash and file tools.
 2. Read any files that look relevant to the current question.
 3. As you work, **record what you learn for future sessions**:
    - Policies (especially anything with a date or version)
@@ -58,50 +66,77 @@ across sessions. Treat it like the team wiki.
 """
 
 
+def _get_or_create(id_path: str, label: str, force: bool, create_fn):
+    """Reuse the ID on disk unless --force was passed or it's missing."""
+    path = Path(id_path)
+    if path.exists() and not force:
+        existing_id = path.read_text().strip()
+        print(f"{label} reused:".ljust(22) + existing_id)
+        return existing_id
+
+    created = create_fn()
+    path.write_text(created.id)
+    print(f"{label} created:".ljust(22) + created.id)
+    return created.id
+
+
 def main() -> None:
     if not os.environ.get("ANTHROPIC_API_KEY"):
         raise SystemExit("Set ANTHROPIC_API_KEY before running.")
 
+    force = "--force" in sys.argv
     client = Anthropic()
 
     # 1. Agent
-    agent = client.beta.agents.create(
-        name="Institutional Memory Agent",
-        model="claude-sonnet-4-6",
-        system=SYSTEM_PROMPT,
-        tools=[{"type": "agent_toolset_20260401"}],
-        metadata={"hackathon": "partner-basecamp-2026", "track": "memory-agent"},
-    )
-    Path(".agent_id").write_text(agent.id)
-    print(f"Agent created:        {agent.id}")
-
-    # 2. Environment (the cloud container)
-    environment = client.beta.environments.create(
-        name="memory-agent-env",
-        config={
-            "type": "cloud",
-            "networking": {"type": "unrestricted"},
-        },
-    )
-    Path(".environment_id").write_text(environment.id)
-    print(f"Environment created:  {environment.id}")
-
-    # 3. Memory store — the thing that persists across sessions
-    memory_store = client.beta.memory_stores.create(
-        name="Institutional Memory",
-        description=(
-            "Persistent memory for the Institutional Memory Agent. Contains "
-            "policies, key people, customer facts, and recurring Q&A learned "
-            "across sessions. Used as authoritative wiki — newer entries "
-            "supersede older ones on the same topic."
+    agent_id = _get_or_create(
+        ".agent_id",
+        "Agent",
+        force,
+        lambda: client.beta.agents.create(
+            name="Institutional Memory Agent",
+            model="claude-opus-5",
+            system=SYSTEM_PROMPT,
+            tools=[{"type": "agent_toolset_20260401"}],
+            metadata={"hackathon": "partner-basecamp-2026", "track": "memory-agent"},
         ),
     )
-    Path(".memory_store_id").write_text(memory_store.id)
-    print(f"Memory store created: {memory_store.id}")
+
+    # 2. Environment (the cloud container)
+    environment_id = _get_or_create(
+        ".environment_id",
+        "Environment",
+        force,
+        lambda: client.beta.environments.create(
+            name="memory-agent-env",
+            config={
+                "type": "cloud",
+                "networking": {"type": "unrestricted"},
+            },
+        ),
+    )
+
+    # 3. Memory store — the thing that persists across sessions
+    memory_store_id = _get_or_create(
+        ".memory_store_id",
+        "Memory store",
+        force,
+        lambda: client.beta.memory_stores.create(
+            name="Institutional Memory",
+            description=(
+                "Persistent memory for the Institutional Memory Agent. Contains "
+                "policies, key people, customer facts, and recurring Q&A learned "
+                "across sessions. Used as authoritative wiki — newer entries "
+                "supersede older ones on the same topic."
+            ),
+        ),
+    )
 
     print("\nSetup complete.")
+    print(f"  Agent:         {agent_id}")
+    print(f"  Environment:   {environment_id}")
+    print(f"  Memory store:  {memory_store_id}")
     print(f"  Inspect the memory store in the Console at:")
-    print(f"    https://platform.claude.com/memory-stores/{memory_store.id}")
+    print(f"    https://platform.claude.com/memory-stores/{memory_store_id}")
     print(f"  Or programmatically with:  python inspect_memory.py")
     print(f"\nNext:  python run_session_1.py")
 
