@@ -1,0 +1,19 @@
+# Resource IDs written by create_agent.py / stretch_memory_curator.py
+.agent_id
+.environment_id
+.memory_store_id
+.curator_agent_id
+.clients.json
+.clients.json.tmp
+
+# Session transcripts
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local env
+.env

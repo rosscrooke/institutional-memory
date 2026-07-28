@@ -1,7 +1,7 @@
 # Option 2 — Institutional Memory Agent
 
 **Concept landed:** Memory & context engineering
-**Tech:** [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) + the [Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)
+**Tech:** [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) + [memory stores](https://platform.claude.com/docs/en/managed-agents/memory)
 **Time:** 60 minutes
 **Output:** An agent that visibly gets sharper across multiple sessions on the same domain.
 
@@ -18,7 +18,7 @@ That's the demo: same question, two sessions, visibly sharper answer.
 You need a workspace API key on the Console (your hackathon team workspace).
 
 ```bash
-cd 02-institutional-memory-agent
+cd institutional-memory
 pip install -r requirements.txt
 export ANTHROPIC_API_KEY="sk-ant-..."
 ```
@@ -31,16 +31,23 @@ Four cards in [`scenario-cards.md`](./scenario-cards.md). Each is a persona that
 
 ## Core build (25 min)
 
-1. **Create the agent.** Run `python create_agent.py`. This creates a Managed Agent with the Memory tool enabled, a system prompt tuned to your scenario, and saves the agent ID to `.agent_id`.
+1. **Provision.** Run `python create_agent.py`. This creates three things and saves
+   their IDs to `.agent_id`, `.environment_id`, and `.memory_store_id`:
+   - A **Managed Agent** with the full agent toolset and a system prompt tuned to your scenario
+   - A cloud **environment** (the container the agent's tools run in)
+   - A **memory store** — the thing that survives across sessions
 
 2. **Run session 1.** Run `python run_session_1.py`. This:
-   - Uploads the docs from `synthetic-data/round1/` via the Files API
-   - Starts a session that asks the agent to read them and answer a baseline question
+   - Inlines the docs from `synthetic-data/round1/` into the user message
+   - Starts a session with the memory store attached (mounted at `/mnt/memory/`)
+   - Asks the agent to read the docs and answer a baseline question
    - Captures the answer in `outputs/session1.txt`
 
+   Between sessions, run `python inspect_memory.py` to see what it chose to remember.
+
 3. **Run session 2.** Run `python run_session_2.py`. This:
-   - Uploads `synthetic-data/round2/` (which contradicts or updates round 1)
-   - Starts a *new* session against the *same* agent
+   - Inlines `synthetic-data/round2/` (which contradicts or updates round 1)
+   - Starts a *new* session against the *same* agent and the *same* memory store
    - Asks the same question
    - Captures the answer in `outputs/session2.txt`
 
@@ -78,15 +85,17 @@ Read both out loud. Let the room see the agent's answer sharpen. Then open the m
 ## What's in this folder
 
 ```
-02-institutional-memory-agent/
+institutional-memory/
 ├── README.md                      (you are here)
 ├── scenario-cards.md
 ├── stretch-goals.md
 ├── requirements.txt
-├── create_agent.py                (creates the Managed Agent with Memory tool)
+├── create_agent.py                (creates the agent, environment, and memory store)
 ├── run_session_1.py               (session 1 — uses round1 docs)
 ├── run_session_2.py               (session 2 — adds round2 docs, asks same question)
+├── inspect_memory.py              (demo helper — prints what's in the memory store)
 ├── stretch_memory_curator.py      (stretch: curator sub-agent)
+├── memory_backend.py              (deprecated — the old client-side backend; safe to delete)
 └── synthetic-data/
     ├── round1/                    (initial context — onboarding handbook, policies, customer cases)
     └── round2/                    (updates and contradictions)

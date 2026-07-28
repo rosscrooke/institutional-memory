@@ -19,9 +19,8 @@ from anthropic import Anthropic
 
 
 TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
+    "Give me my workout for tomorrow morning. 30 minutes, at home. Be specific "
+    "about exercises, sets, and reps."
 )
 
 DOCS_DIR = Path("synthetic-data/round1")
@@ -73,7 +72,7 @@ def main() -> None:
     )
 
     user_message = (
-        "I'm including our onboarding and policy documents below. Please:\n"
+        "I'm including my client file below. Please:\n"
         "1. First, check your memory store at /mnt/memory/ to see what you've "
         "learned in previous sessions.\n"
         "2. Then read the documents below.\n"
@@ -111,7 +110,16 @@ def main() -> None:
                     print(f"\n  [memory: {name}  {target}]", flush=True)
                 else:
                     print(f"\n  [{name}]", flush=True)
+            elif event.type == "session.status_terminated":
+                print("\n\n[session terminated]")
+                break
             elif event.type == "session.status_idle":
+                # Sessions go idle transiently (e.g. waiting on a tool
+                # confirmation). Only a non-"requires_action" stop reason means
+                # the agent is actually done with the turn.
+                stop_reason = getattr(event, "stop_reason", None)
+                if getattr(stop_reason, "type", None) == "requires_action":
+                    continue
                 print("\n\n[agent finished]")
                 break
 

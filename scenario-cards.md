@@ -64,6 +64,47 @@ Each team picks ONE persona. The synthetic data folder under `synthetic-data/rou
 
 ---
 
+## Card E — Personal Training Coach ← **the scenario in this repo**
+
+**Persona:** A coach programming sessions for one client over many weeks. It
+remembers their injuries, their equipment, and what they'll actually do.
+
+**Round 1 docs:** Client intake, injuries and limitations, preferences and history.
+
+**Round 2 docs:** A physio update (partial wrist clearance + a brand-new knee
+restriction), an equipment update (bar and kettlebell added, bench broken).
+
+**The test question (use this in both sessions):**
+> "Give me my workout for tomorrow morning. 30 minutes, at home. Be specific about exercises, sets, and reps."
+
+**What "better answer in session 2" looks like:** it reintroduces neutral-grip
+pressing at the higher load and says why, keeps flat-palm loading out, avoids
+deep knee flexion, substitutes off the broken bench — and still avoids burpees
+and loaded spinal flexion, neither of which round 2 mentions at all.
+
+### Why this card is the sharpest memory test
+
+The other four cards put the answer in the round-2 documents: a stateless agent
+reading only round 2 would answer the prod-access question largely correctly, and
+memory shows up only as the phrase *"this changed last week."*
+
+Here the question mentions no constraints, and round 2 restates only some of them.
+That splits the memory behaviour into four separately observable outcomes:
+
+| Constraint | Where it appears | What it tests |
+| --- | --- | --- |
+| Burpees, loaded spinal flexion | **Round 1 only** | **Persistence** — silence is not a clearance |
+| Left knee | Round 2 only | Picking up a new constraint |
+| Bench | Round 1, invalidated by round 2 | Full supersession |
+| Right wrist | Both, partially changed | **Nuance** — "cleared for neutral grip" ≠ "wrist is fine" |
+
+Row 1 is the demo. If burpees or a weighted sit-up appear in the session-2 plan,
+memory failed, and nobody has to squint at the output to see it. Row 4 is the one
+that separates a good answer from a lazy one: an agent that overwrites the whole
+wrist entry on seeing "cleared" will wrongly allow push-ups.
+
+---
+
 ## Picking guidance
 
 | If your team is... | Pick |

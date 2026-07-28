@@ -4,3 +4,7 @@
 # 2026-07-22 cutover so cached/offline installs don't fall behind.
 anthropic>=0.116.0
 python-dotenv>=1.0.0
+
+# API (api/) — not needed to run the CLI scripts
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
