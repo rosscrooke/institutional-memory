@@ -16,6 +16,11 @@ import os
 from pathlib import Path
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+# requirements.txt ships python-dotenv but nothing called load_dotenv(), so a
+# .env file looked reasonable and silently did nothing.
+load_dotenv()
 
 
 # Match session 1
