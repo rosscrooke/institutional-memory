@@ -1,0 +1,19 @@
+# Managed Agents resource IDs — provisioned once, committed deliberately, not by accident
+.agent_id
+.environment_id
+.memory_store_id
+.curator_agent_id
+.deployment_id
+
+# Secrets
+.env
+.env.*
+
+# Session output
+outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
