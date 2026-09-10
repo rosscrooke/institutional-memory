@@ -1,0 +1,19 @@
+# Secrets — never commit
+.env
+.env.*
+
+# Provisioned resource IDs (created at runtime by create_agent.py)
+.agent_id
+.environment_id
+.curator_agent_id
+.memory_store_id
+.memory_store_*
+
+# Session outputs / snapshots
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
