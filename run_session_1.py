@@ -17,12 +17,13 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-
-TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
+from prompts import (
+    CUSTOMER_NAME,
+    MEMORY_INSTRUCTIONS_SESSION_1,
+    SESSION_1_MESSAGE,
+    TEST_QUESTION,
 )
+
 
 DOCS_DIR = Path("synthetic-data/round1")
 OUTPUT_DIR = Path("outputs")
@@ -63,25 +64,13 @@ def main() -> None:
                 "type": "memory_store",
                 "memory_store_id": memory_store_id,
                 "access": "read_write",
-                "instructions": (
-                    "This is your persistent institutional memory. Mounted at "
-                    "/mnt/memory/. Check it before starting. Record what you "
-                    "learn for future sessions."
-                ),
+                "instructions": MEMORY_INSTRUCTIONS_SESSION_1,
             }
         ],
     )
 
-    user_message = (
-        "I'm including our onboarding and policy documents below. Please:\n"
-        "1. First, check your memory store at /mnt/memory/ to see what you've "
-        "learned in previous sessions.\n"
-        "2. Then read the documents below.\n"
-        "3. Then answer the question.\n"
-        "4. Before you finish, save anything worth remembering to /mnt/memory/.\n\n"
-        f"{context}\n\n"
-        "==================================================\n"
-        f"QUESTION: {TEST_QUESTION}"
+    user_message = SESSION_1_MESSAGE.format(
+        customer=CUSTOMER_NAME, context=context, question=TEST_QUESTION
     )
 
     final_text_parts: list[str] = []

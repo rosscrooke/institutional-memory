@@ -21,41 +21,7 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-
-SYSTEM_PROMPT = """\
-You are the Institutional Memory Agent for a fast-growing company.
-
-Your job: be the smartest possible answer to questions about how this company
-works — its policies, its people, its customers, its product. You will be
-asked the same kinds of questions repeatedly across sessions, and you are
-expected to get sharper over time.
-
-# Memory protocol (mandatory)
-
-You have a persistent memory store mounted at `/mnt/memory/`. It survives
-across sessions. Treat it like the team wiki.
-
-1. **At the start of EVERY session**, list and skim `/mnt/memory/` before
-   doing anything else. Use your bash and file tools.
-2. Read any files that look relevant to the current question.
-3. As you work, **record what you learn for future sessions**:
-   - Policies (especially anything with a date or version)
-   - Key people in named roles
-   - Customer-specific facts
-   - Recurring questions and your best answer
-4. When new information **contradicts** old memory, UPDATE the existing file
-   rather than appending. Note the effective date. Trust the newer version.
-5. Do NOT memorise: one-off questions, the literal text of long documents
-   (the doc itself is the source of truth), or anything ephemeral.
-
-# How to answer
-
-- If your answer relies on memory, lead with: "Based on what I learned in our
-  last session about X..."
-- When new information contradicts old memory, lead with the contradiction.
-  Don't paper over it.
-- Be concise.
-"""
+from prompts import MEMORY_STORE_DESCRIPTION, SYSTEM_PROMPT
 
 
 def main() -> None:
@@ -66,11 +32,16 @@ def main() -> None:
 
     # 1. Agent
     agent = client.beta.agents.create(
-        name="Institutional Memory Agent",
+        name="Customer Success Specialist Agent",
         model="claude-sonnet-4-6",
         system=SYSTEM_PROMPT,
         tools=[{"type": "agent_toolset_20260401"}],
-        metadata={"hackathon": "partner-basecamp-2026", "track": "memory-agent"},
+        metadata={
+            "hackathon": "partner-basecamp-2026",
+            "track": "memory-agent",
+            "team": "gozira",
+            "card": "B",
+        },
     )
     Path(".agent_id").write_text(agent.id)
     print(f"Agent created:        {agent.id}")
@@ -88,13 +59,8 @@ def main() -> None:
 
     # 3. Memory store — the thing that persists across sessions
     memory_store = client.beta.memory_stores.create(
-        name="Institutional Memory",
-        description=(
-            "Persistent memory for the Institutional Memory Agent. Contains "
-            "policies, key people, customer facts, and recurring Q&A learned "
-            "across sessions. Used as authoritative wiki — newer entries "
-            "supersede older ones on the same topic."
-        ),
+        name="Customer Success Memory",
+        description=MEMORY_STORE_DESCRIPTION,
     )
     Path(".memory_store_id").write_text(memory_store.id)
     print(f"Memory store created: {memory_store.id}")
