@@ -17,13 +17,15 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
+from prompts import (
+    CUSTOMER_NAME,
+    MEMORY_INSTRUCTIONS_UPDATE,
+    SESSION_2_MESSAGE,
+    TEST_QUESTION,
+)
+
 
 # Match session 1
-TEST_QUESTION = (
-    "I just joined the company and I need read-only prod access to debug an "
-    "issue tomorrow. What do I do? Be specific about the steps and the people "
-    "I need to talk to."
-)
 
 DOCS_DIR = Path("synthetic-data/round2")
 OUTPUT_DIR = Path("outputs")
@@ -64,30 +66,13 @@ def main() -> None:
                 "type": "memory_store",
                 "memory_store_id": memory_store_id,
                 "access": "read_write",
-                "instructions": (
-                    "This is your persistent institutional memory. Some entries "
-                    "may be out of date — reconcile against the new documents in "
-                    "this session and UPDATE existing entries (don't just append)."
-                ),
+                "instructions": MEMORY_INSTRUCTIONS_UPDATE,
             }
         ],
     )
 
-    user_message = (
-        "I'm including some updated and new documents below. Some of them "
-        "contradict things you learned in our previous session.\n\n"
-        "Please:\n"
-        "1. First, check your memory store at /mnt/memory/ to see what you "
-        "already know.\n"
-        "2. Read the new documents below.\n"
-        "3. Reconcile conflicts — UPDATE memory entries to reflect the "
-        "newer information. Note dates.\n"
-        "4. Answer the question.\n"
-        "5. If your answer differs from your previous answer, lead with what "
-        "changed and why.\n\n"
-        f"{context}\n\n"
-        "==================================================\n"
-        f"QUESTION: {TEST_QUESTION}"
+    user_message = SESSION_2_MESSAGE.format(
+        customer=CUSTOMER_NAME, context=context, question=TEST_QUESTION
     )
 
     final_text_parts: list[str] = []

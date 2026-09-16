@@ -1,0 +1,8 @@
+.venv/
+.env
+.agent_id
+.environment_id
+.memory_store_id
+.curator_agent_id
+outputs/
+__pycache__/

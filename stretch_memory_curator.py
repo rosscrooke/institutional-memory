@@ -21,23 +21,7 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-
-CURATOR_SYSTEM_PROMPT = """\
-You are the Memory Curator. Your only job is memory hygiene.
-
-You have access to another agent's memory store (read/write). On each run:
-
-1. List every entry in the store.
-2. Merge any duplicates — keep the most recent version, link the others.
-3. Flag any unresolved contradictions to the operator with a short summary.
-4. Prune anything that is:
-   - More than 90 days old AND not referenced in a recent session
-   - Ephemeral (one-off support tickets, individual conversation snippets)
-   - Subsumed by a more general entry that was added later
-5. Produce a one-paragraph summary of what you did.
-
-Do NOT add new knowledge. Do NOT answer domain questions. You only clean.
-"""
+from prompts import CURATOR_SYSTEM_PROMPT, CURATOR_TASK_MESSAGE
 
 
 def main() -> None:
@@ -45,7 +29,13 @@ def main() -> None:
     if not api_key:
         raise SystemExit("Set ANTHROPIC_API_KEY before running.")
 
+    for required in (".agent_id", ".environment_id", ".memory_store_id"):
+        if not Path(required).exists():
+            raise SystemExit(f"Missing {required}. Run create_agent.py first.")
+
     main_agent_id = Path(".agent_id").read_text().strip()
+    environment_id = Path(".environment_id").read_text().strip()
+    memory_store_id = Path(".memory_store_id").read_text().strip()
 
     client = Anthropic(
         api_key=api_key,
@@ -76,34 +66,44 @@ def main() -> None:
         print(f"Curator agent created: {curator_id}")
 
     # Run a curation session. In production this would be a scheduled Routine.
-    session = client.beta.sessions.create(agent=curator_id)
-    client.beta.sessions.events.send(
-        session.id,
-        events=[
+    # The memory store must be attached, otherwise /mnt/memory/ doesn't exist.
+    session = client.beta.sessions.create(
+        agent=curator_id,
+        environment_id=environment_id,
+        title="Memory curation",
+        resources=[
             {
-                "type": "user.message",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            f"Curate the memory store of agent {main_agent_id}. "
-                            "Follow your standard process. Report back when done."
-                        ),
-                    }
-                ],
+                "type": "memory_store",
+                "memory_store_id": memory_store_id,
+                "access": "read_write",
+                "instructions": "The memory store you are curating.",
             }
         ],
     )
 
     print("Curator working...")
     text_parts = []
-    for event in client.beta.sessions.events.stream(session.id):
-        if event.type == "agent.message_delta":
-            for block in event.delta.content:
-                if block.type == "text_delta":
-                    text_parts.append(block.text)
-        if event.type == "session.status_idle":
-            break
+    with client.beta.sessions.events.stream(session.id) as stream:
+        client.beta.sessions.events.send(
+            session.id,
+            events=[
+                {
+                    "type": "user.message",
+                    "content": [{"type": "text", "text": CURATOR_TASK_MESSAGE}],
+                }
+            ],
+        )
+        for event in stream:
+            if event.type == "agent.message":
+                for block in event.content:
+                    if getattr(block, "type", None) == "text":
+                        text_parts.append(block.text)
+            elif event.type == "agent.tool_use":
+                inp = getattr(event, "input", {}) or {}
+                target = inp.get("path") or inp.get("file_path") or inp.get("command") or ""
+                print(f"  [{getattr(event, 'name', '?')}  {target}]", flush=True)
+            elif event.type == "session.status_idle":
+                break
 
     print("\n=== CURATOR REPORT ===")
     print("".join(text_parts))
