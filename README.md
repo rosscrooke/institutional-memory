@@ -16,7 +16,7 @@ That's the demo: same question, two sessions, visibly sharper answer.
 ## Setup (5 min)
 
 You need a workspace API key on the Console (your hackathon team workspace).
-
+you need to use the claude-advantage-assist with the url https://servicesessentials.ibm.com/settings/apikey gateway 
 ```bash
 cd 02-institutional-memory-agent
 pip install -r requirements.txt
