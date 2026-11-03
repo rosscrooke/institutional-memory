@@ -33,12 +33,12 @@ def get_client() -> Anthropic:
 def ask_claude(prompt: str, system: str = "") -> str:
     """
     Fast single Messages API call for categorizing, summarizing, prioritizing, drafting.
-    Model: claude-sonnet-4-6.
+    Model: claude-haiku-4-5.
     Returns the final text response.
     """
     client = get_client()
     response = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-haiku-4-5",
         max_tokens=1024,
         system=system if system else "You are a helpful assistant.",
         messages=[{"role": "user", "content": prompt}],
