@@ -1,13 +1,20 @@
-# Option 2 — Institutional Memory Agent
+# Institutional Memory Hackathon App
 
-**Concept landed:** Memory & context engineering
-**Tech:** [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) + the [Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)
-**Time:** 60 minutes
-**Output:** An agent that visibly gets sharper across multiple sessions on the same domain.
+**Team:** 4 developers (no prior dev experience)
+**Tech:** Streamlit + [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) + Memory Store
+**Architecture:** Shared core helpers, per-person UI & agent modules in separate files (no conflicts)
 
-## The pitch
+## Kickoff checklist ✓ COMPLETE
 
-Memory is the concept enterprise clients ask about most and understand least. Most people think it means "a vector database for documents." It doesn't — it means **the agent decides what to remember, what to forget, and what to update when it learns something new.**
+- [x] Clone repo & install deps: `pip install -r requirements.txt`
+- [x] Create `.env` with `ANTHROPIC_API_KEY` (add to `.gitignore`)
+- [x] Run `python create_agent.py` — provisioned shared agent, environment, memory store (IDs in `.agent_id`, `.environment_id`, `.memory_store_id`)
+- [x] Write `core.py` with schemas & helpers
+- [x] Write `app.py` with tabs & layout
+- [x] Create UI placeholders (`ui/*.py`)
+- [x] Create agent stubs (`agents/*.py`)
+- [x] Write `seed_demo.py`
+- [ ] **Next: Run `python seed_demo.py` then `streamlit run app.py` to test**
 
 You'll build an agent that runs two sessions on the same domain. Between the two sessions, the agent's memory persists. New information in session 2 contradicts session 1. The agent should reconcile, update, and answer better than it did the first time.
 
@@ -16,78 +23,79 @@ That's the demo: same question, two sessions, visibly sharper answer.
 ## Setup (5 min)
 
 You need a workspace API key on the Console (your hackathon team workspace).
-
+you need to use the claude-advantage-assist with the url https://servicesessentials.ibm.com/settings/apikey gateway 
 ```bash
-cd 02-institutional-memory-agent
-pip install -r requirements.txt
-export ANTHROPIC_API_KEY="sk-ant-..."
+export ANTHROPIC_API_KEY="sk-ant-..."  # Your workspace API key
+python create_agent.py                  # Creates agent + memory store (shared by team)
+python seed_demo.py                     # Load demo data
+streamlit run app.py                    # Test the UI
 ```
 
-That's it. No infrastructure to spin up. Managed Agents handles the runtime.
-
-## Pick a scenario card
-
-Four cards in [`scenario-cards.md`](./scenario-cards.md). Each is a persona that benefits from memory across sessions. Pick one.
-
-## Core build (25 min)
-
-1. **Create the agent.** Run `python create_agent.py`. This creates a Managed Agent with the Memory tool enabled, a system prompt tuned to your scenario, and saves the agent ID to `.agent_id`.
-
-2. **Run session 1.** Run `python run_session_1.py`. This:
-   - Uploads the docs from `synthetic-data/round1/` via the Files API
-   - Starts a session that asks the agent to read them and answer a baseline question
-   - Captures the answer in `outputs/session1.txt`
-
-3. **Run session 2.** Run `python run_session_2.py`. This:
-   - Uploads `synthetic-data/round2/` (which contradicts or updates round 1)
-   - Starts a *new* session against the *same* agent
-   - Asks the same question
-   - Captures the answer in `outputs/session2.txt`
-
-4. **Compare.** Open both outputs. The session 2 answer should:
-   - Acknowledge the conflict
-   - Reflect the newer information
-   - Reference what it learned in session 1 via its memory store
-
-By minute 30 you have two sessions to compare and a clear "the agent learned something" moment.
-
-## Stretch goals (20 min — pick at least one)
-
-See [`stretch-goals.md`](./stretch-goals.md).
-
-**Tier 1 — Make memory deliberate:**
-- Add explicit memory instructions to the system prompt. Tell the agent what kinds of things to remember and what to ignore.
-- Add a sub-agent that curates the memory store (the "memory curator" pattern).
-
-**Tier 2 — Make memory resilient:**
-- Adversarial test: feed it deliberately wrong information in session 2 and see if it spots the contradiction.
-- Add a third session where you ask: "What have you learned?" and see what the agent says.
-
-**Tier 3 — Make memory production-shaped:**
-- Tie memory to a customer ID via metadata so the agent has per-tenant memory.
-- Use Files API to attach growing document sets across multiple sessions and watch context grow.
-
-## Two-minute demo
-
-Side-by-side terminal windows:
-- Left: session 1 answer
-- Right: session 2 answer (same question, after memory + new context)
-
-Read both out loud. Let the room see the agent's answer sharpen. Then open the memory store on the third terminal — show what the agent chose to remember.
-
-## What's in this folder
+## Architecture
 
 ```
-02-institutional-memory-agent/
-├── README.md                      (you are here)
-├── scenario-cards.md
-├── stretch-goals.md
-├── requirements.txt
-├── create_agent.py                (creates the Managed Agent with Memory tool)
-├── run_session_1.py               (session 1 — uses round1 docs)
-├── run_session_2.py               (session 2 — adds round2 docs, asks same question)
-├── stretch_memory_curator.py      (stretch: curator sub-agent)
-└── synthetic-data/
-    ├── round1/                    (initial context — onboarding handbook, policies, customer cases)
-    └── round2/                    (updates and contradictions)
+app.py                          ← main Streamlit app (frozen after kickoff)
+core.py                         ← shared helpers & schemas (frozen)
+ui/
+  ├── inputs.py                 ← Person 1: file upload, categorization UI
+  ├── digest_actions.py         ← Person 2: summaries & task list
+  ├── ask.py                    ← Person 3: chat interface
+  └── monitor.py                ← Person 4: agent status & memory viewer
+agents/
+  ├── categorizer.py            ← Person 1: tag & category AI
+  ├── summarizer.py             ← Person 2: quick & in-depth summaries
+  ├── prioritizer.py            ← Person 2: extract & rank tasks
+  ├── chat.py                   ← Person 3: Q&A with memory
+  ├── task_agent.py             ← Person 3: draft emails/meetings
+  └── feedback.py               ← Person 4: memory curator
+data/
+  ├── items/                    ← User inputs (JSON files)
+  ├── tasks/                    ← Extracted action items
+  ├── feedback/                 ← User ratings & comments
+  └── logs/                     ← Agent execution logs
+synthetic-data/
+  ├── round1/                   ← Initial context docs
+  └── round2/                   ← Contradictory updates
 ```
+
+## Each person's work
+
+**Person 1 — Inputs + Categorizer**
+- Implement `render_inputs()` — file upload, text area, tag editor
+- Implement `agents/categorizer.py` — AI-generated tags & category
+- On save: call categorizer, save to `data/items/`, ingest to memory, log
+
+**Person 2 — Digest + Actions + Summarizer + Prioritizer**
+- Implement `render_digest()` — quick snapshot / in-depth toggle
+- Implement `render_actions()` — prioritized task list with "Delegate to agent" buttons
+- Implement `agents/summarizer.py` — cache results in item summaries
+- Implement `agents/prioritizer.py` — extract & rank High/Med/Low
+
+**Person 3 — Ask + Chat + Task Agent**
+- Implement `render_ask()` — suggested prompts + chat interface
+- Implement `agents/chat.py` — Q&A via `run_memory_session`
+- Implement `agents/task_agent.py` — draft emails/meetings (don't send)
+
+**Person 4 — Monitor + Feedback + Demo**
+- Implement `render_monitor()` — agent status, memory diff, feedback form
+- Implement `agents/feedback.py` — learn from feedback (memory curator)
+- Prepare & rehearse 2-min demo
+
+## Demo script (~2 min)
+
+1. Upload round1 docs, show AI tags, save
+2. Show digest & actions; delegate one task
+3. Ask: "I need prod access. What do I do?"
+4. Upload round2 docs (policy updated, org changed)
+5. Ask same question — answer reflects new policy & flags change
+6. Show memory diff in monitoring panel
+
+## Rules for every developer
+
+- **Edit only YOUR files.** Never modify `app.py`, `core.py`, or `.gitignore` after kickoff.
+- Use helpers in `core.py`; don't invent new data formats.
+- Log all agent calls: `log_event(agent, action, status, detail)`
+- Wrap slow calls in `st.spinner(...)`; show errors with `st.error(...)`
+- Test locally with `streamlit run app.py` before pushing
+- Commit after each working feature
+- **No databases, no auth, no deployment.** Local Streamlit only.
