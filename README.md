@@ -16,8 +16,14 @@
 - [x] Write `seed_demo.py`
 - [ ] **Next: Run `python seed_demo.py` then `streamlit run app.py` to test**
 
-## Setup (once, before team splits)
+You'll build an agent that runs two sessions on the same domain. Between the two sessions, the agent's memory persists. New information in session 2 contradicts session 1. The agent should reconcile, update, and answer better than it did the first time.
 
+That's the demo: same question, two sessions, visibly sharper answer.
+
+## Setup (5 min)
+
+You need a workspace API key on the Console (your hackathon team workspace).
+you need to use the claude-advantage-assist with the url https://servicesessentials.ibm.com/settings/apikey gateway 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."  # Your workspace API key
 python create_agent.py                  # Creates agent + memory store (shared by team)
