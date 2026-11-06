@@ -1,0 +1,8 @@
+dashboard/.state/
+.env
+__pycache__/
+.pytest_cache/
+outputs/
+.agent_id
+.environment_id
+.memory_store_id
