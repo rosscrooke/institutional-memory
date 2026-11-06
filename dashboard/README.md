@@ -10,7 +10,16 @@ python -m pytest -q                      # offline tests for dashboard/core.py
 ```
 
 First load provisions an agent, environment and the global `team-knowledge`
-store (IDs cached in `dashboard/.state/`, gitignored).
+store (IDs cached in `dashboard/.state/`, gitignored). If that store is empty it is
+seeded once from `dashboard/seed/`, so every role gets a briefing before anyone has
+ingested anything. The seed is the January 2026 knowledge (round 1) written as concept
+files. Seeded versions show up as *initial knowledge (seed)* in timelines.
+A non-empty store is never touched. To re-seed, delete `dashboard/.state/ids.json`.
+
+Every seed file has `last_reviewed` frontmatter. `data/analytics-warehouse.md` is
+deliberately stale (`last_reviewed: 2024-06-03`, still mentions a planned "2025" migration).
+It is there for a future "mark as stale" feature. That feature has to read `last_reviewed`:
+the API `updated_at` of every seeded file is the seeding date.
 
 | Who | Global store | Personal store |
 | --- | --- | --- |
@@ -21,7 +30,7 @@ Access is enforced by the API, not by the prompt.
 
 ## Demo script
 
-1. **Experienced colleague** "Tom": upload `synthetic-data/round1/*.md` → Ingest.
+1. (Automatic) the global store is seeded with the round-1 knowledge on first load.
 2. **New hire** "Alice", role *Backend Engineer*: see role briefing + suggested questions.
    Click *"How do I get read-only prod access?"*.
 3. Switch to **Tom**: upload `synthetic-data/round2/*.md` → Ingest.

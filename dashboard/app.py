@@ -132,7 +132,7 @@ def expert_view():
     st.subheader("Current team memory")
     mems = memories(GLOBAL)
     if not mems:
-        st.caption("Empty — ingest the round-1 docs from `synthetic-data/round1/` to seed it.")
+        st.caption("Empty. Paste a note or upload docs above to add the first team knowledge.")
     for m in mems:
         with st.expander(f"{m.path}  ·  updated {m.updated_at}"):
             render_memory(m, "History")

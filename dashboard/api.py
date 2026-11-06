@@ -24,14 +24,17 @@ from dashboard.core import (
     StoreRegistry,
     build_timeline,
     load_json,
+    load_seed,
     parse_briefing,
     save_json,
+    seed_store,
     slugify,
 )
 
 load_dotenv()
 
 STATE = Path(__file__).parent / ".state"
+SEED_DIR = Path(__file__).parent / "seed"
 MODEL = "claude-sonnet-5-5"
 
 ROLES = [
@@ -120,7 +123,20 @@ def _ids() -> dict:
 
 
 def global_store() -> str:
-    return _ids()["global_store"]
+    """Global store ID. On first use, seeds an empty store from `dashboard/seed/` so every
+    persona has something to work with before anyone from the team ingests."""
+    ids = _ids()
+    if not ids.get("seeded"):
+        store_id = ids["global_store"]
+        mems = client().beta.memory_stores.memories
+        seed_store(
+            existing_paths=[m.path for m in list_memories(store_id)],
+            seed=load_seed(SEED_DIR),
+            create=lambda path, content: mems.create(store_id, path=path, content=content),
+        )
+        ids["seeded"] = True
+        save_json(STATE / "ids.json", ids)
+    return ids["global_store"]
 
 
 def _create_user_store(name: str) -> str:

@@ -66,6 +66,27 @@ class AttributionLog:
         return f"{entry['name']} ({entry['mode']})" if entry else "agent"
 
 
+SEED_AUTHOR = "initial knowledge (seed)"
+
+
+def load_seed(directory: Path) -> dict[str, str]:
+    """Read every .md file under `directory` as {store path: content}."""
+    directory = Path(directory)
+    return {
+        "/" + f.relative_to(directory).as_posix(): f.read_text()
+        for f in sorted(directory.rglob("*.md"))
+    }
+
+
+def seed_store(existing_paths, seed: dict[str, str], create: Callable[[str, str], object]) -> list[str]:
+    """Write the seed into a store, but only if it is still empty — never overwrite team knowledge."""
+    if list(existing_paths):
+        return []
+    for path, content in seed.items():
+        create(path, content)
+    return list(seed)
+
+
 @dataclass(frozen=True)
 class TimelineEntry:
     when: str  # e.g. "2026-05-15 14:02 UTC" (time matters: demo ingests happen same day)
@@ -84,6 +105,8 @@ def build_timeline(versions, who: Callable[[str | None], str]) -> list[TimelineE
         content = v.content or ""
         actor = v.created_by
         session_id = getattr(actor, "session_id", None) if actor else None
+        # Only the seeding step writes through the API directly; people write via sessions.
+        author = SEED_AUTHOR if getattr(actor, "type", None) == "api_actor" else who(session_id)
         diff = None
         if previous is not None:
             diff = "".join(
@@ -98,7 +121,7 @@ def build_timeline(versions, who: Callable[[str | None], str]) -> list[TimelineE
             TimelineEntry(
                 when=v.created_at.strftime("%Y-%m-%d %H:%M UTC"),
                 operation=str(v.operation),
-                author=who(session_id),
+                author=author,
                 content=content,
                 diff=diff,
             )
